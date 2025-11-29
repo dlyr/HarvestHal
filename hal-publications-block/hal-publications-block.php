@@ -1,15 +1,15 @@
 <?php
 /**
-* Plugin Name:       hal-publications
+ * Plugin Name:       hal-publications
 
-* Description:       Query https://api.archives-ouvertes.fr/ and desplay the result
-* Version:           0.1.0
-* Requires at least: 6.7
-* Requires PHP:      7.4
-* Author:            David Vanderhaeghe
-* License:           GPL-2.0-or-later
-* License URI:       https://www.gnu.org/licenses/gpl-2.0.html
-* Text Domain:       harvest-hal
+ * Description:       Query https://api.archives-ouvertes.fr/ and desplay the result
+ * Version:           0.1.0
+ * Requires at least: 6.7
+ * Requires PHP:      7.4
+ * Author:            David Vanderhaeghe
+ * License:           GPL-2.0-or-later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       harvest-hal
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -78,22 +78,29 @@ function hh_get_publi_title($p){
 
 function hh_get_publi_authors($p){
 
-  $authorpage["L. Barthe"] = "https://www.irit.fr/~Loic.Barthe";
-  $authorpage["N. Mellado"] = "https://www.irit.fr/~Nicolas.Mellado";
-  $authorpage["M. Paulin"] = "https://www.irit.fr/~Mathias.Paulin/";
-  $authorpage["D. Vanderhaeghe"] = "https://www.dlyr.fr";
-
+  $authorpage["loic-barthe"] = "https://www.irit.fr/~Loic.Barthe";
+  $authorpage["nicolas-mellado"] = "https://www.irit.fr/~Nicolas.Mellado";
+  $authorpage["mathias-paulin"] = "https://www.irit.fr/~Mathias.Paulin/";
+  $authorpage["vdh"] = "https://www.dlyr.fr";
+  $authorpage["megane-bati"] ="https://megane-bati.github.io/";
+  
   $result ='';
-  $c = count($p["authFullName_s"]);
+  $c = count($p["authFullNameIdHal_fs"]);
   $i = 1;
-  foreach ($p["authFullName_s"] as $key=>$author){
-    $p["authFirstNameIni_s"][$key] = substr($p["authFirstName_s"][$key],0,1).".";
+  foreach ($p["authFullNameIdHal_fs"] as $key=>$author){
+
+    $auth = explode("_FacetSep_", $author);
+    $name = $auth[0];
+    $idHal = "dummy";
+    if(isset($auth[1])) $idHal = $auth[1];
+    
+    //    $p["authFirstNameIni_s"][$key] = substr($p["authFirstName_s"][$key],0,1).".";
 
     // compute name and add link to author page if needed
-    $currentname = $p["authFirstNameIni_s"][$key]." ".$p["authLastName_s"][$key];
+    $currentname = $name;//$p["authFirstNameIni_s"][$key]." ".$p["authLastName_s"][$key];
     // add links to authors webpages
-    if(isset($authorpage[$currentname]))
-      $currentname = "<a href=\"$authorpage[$currentname]\" target=\"_blank\">$currentname</a>";
+    if(isset($idHal) && isset($authorpage[$idHal]))
+      $currentname = "<a href=\"$authorpage[$idHal]\" target=\"_blank\">$currentname</a>";
     $result .=  $currentname;
     if($i++ < $c) $result .= ", ";
   }
@@ -109,27 +116,39 @@ function hh_get_publi_links($p){
   $acmlink["a dynamic drawing algorithm for interactive painterly rendering"] = "https://dl.acm.org/doi/10.1145/2024676.2024693?cid=81319503065";
   $acmlink["constrained palette-space exploration"] ="http://dl.acm.org/authorize?N42654";
 
+  $printed=false;
   if(hh_check_field($p, "fileMain_s")){
-    $result .= '<a href="'.$p["fileMain_s"].'"><img src="http://www.dlyr.fr/data/Haltools_pdf.png" width="16" height="16" border="0" alt="pdf download" style="vertical-align:middle"/></a> ';
-    if(isset($acmlink[$lowtitle])){
-      $result .= '<a href="'.$acmlink[$lowtitle].'"><img src="http://dl.acm.org/images/oa.gif" width="16" height="16" border="0" alt="ACM DL Author-ize service" style="vertical-align:middle"/></a> ';
-    }
+    if($printed)$result.= " ";
+    $result .= '<a href="'.$p["fileMain_s"].'"><img src="http://www.dlyr.fr/data/Haltools_pdf.png" width="24" height="24" border="0" alt="download pdf" style="vertical-align:middle"/></a> ';
+    $printed=true;
   }
-
+  if(isset($acmlink[$lowtitle])){
+    if($printed)$result.= " ";
+    $result .= '<a href="'.$acmlink[$lowtitle].'"><img src="http://dl.acm.org/images/oa.gif" width="24" height="24" border="0" alt="ACM DL Author-ize service" style="vertical-align:middle"/></a> ';
+    $printed=true;
+  }
   if(hh_check_field($p, "seeAlso_s"))
   {
-    $result .= '-';
+    $result .= ' ';
     foreach ($p["seeAlso_s"] as &$value) {
-      if (strpos($value, "github.com") !== false || strpos($value, "gitlab") !== false ) {
-        $result.= '<b>[<a href="'.$value.'" target="_blank">code</a>]</b> ';
+      
+      if (strpos($value, "youtu") !== false) { // look for youtube and youtu.be
+        if($printed)$result.= " ";
+        $image_url = plugins_url( 'assets/YouTube.webp', __FILE__);   
+        $result.=  '<a href="'.$value.'" target="_blank"><img src="' . esc_url( $image_url ) . '"  height="24"  alt="link to video on YouTube"  style="vertical-align:middle" /></a>';
+        $printed=true;
       }
-      else if (strpos($value, "youtu") !== false) { // look for youtube and youtu.be
-        $result.=  '<b>[<a href="'.$value.'" target="_blank">video</a>]</b> ';
+      else if (strpos($value, "github.com") !== false || strpos($value, "gitlab") !== false ) {
+        if($printed)$result.= " ";
+        $result.= '<a href="'.$value.'" target="_blank">code</a>';
+        $printed=true;
       }
       else {
-        $result.=  '<b>[<a href="'.$value.'" target="_blank">project page</a>]</b> ';
+        if($printed)$result.= " ";
+        $result.=  '<a href="'.$value.'" target="_blank">project page</a>';
+        $printed=true;
     }}
-    $result .= '-';
+    $result .= '.';
   }
 
   return $result;  
@@ -215,7 +234,7 @@ function hh_write_log( $data ) {
 }
 
 function hh_download_json($query){
-  $fl="halId_s,source_s,description_s,authorityInstitution_s,bookTitle_s,page_s,title_s,authFullName_s,docType_s,journalTitle_s,conferenceTitle_s,fileMain_s,uri_s,authLastName_s,authFirstName_s,thumbId_i,producedDate_tdate,producedDateY_i,comment_s,seeAlso_s";
+  $fl="halId_s,source_s,description_s,authorityInstitution_s,bookTitle_s,page_s,title_s,authFullName_s,docType_s,journalTitle_s,conferenceTitle_s,fileMain_s,uri_s,authFullNameIdHal_fs,thumbId_i,producedDate_tdate,producedDateY_i,comment_s,seeAlso_s";
 
   $q=urlencode('authIdHal_s:("vdh"OR"nicolas-mellado"OR"mathias-paulin"OR"loic-barthe"OR"megane-bati") OR structId_i:(1001793 OR 1612886)');
   if(!empty($query)){
@@ -241,7 +260,6 @@ function hh_filter_hal_ids($var){
 }
 
 function hh_filter( $publis ){
-
   return array_filter($publis, "hh_filter_hal_ids");
 }
 

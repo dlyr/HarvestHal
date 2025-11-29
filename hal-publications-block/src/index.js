@@ -11,7 +11,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import Edit from './edit';
 import save from './save';
 import metadata from './block.json';
-
+import './style.scss';
 /**
  * Define a custom SVG icon for the block. This icon will appear in
  * the Inserter and when the user selects the block in the Editor.
@@ -28,12 +28,6 @@ const halIcon = (
  */
 registerBlockType( metadata.name, {
 	icon: halIcon,
-	/**
-	 * @see ./edit.js
-	 */
 	edit: Edit,
-	/**
-	 * @see ./save.js
-	 */
 	save,
 } );
