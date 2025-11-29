@@ -12,13 +12,26 @@ import { PanelBody, TextControl, ToggleControl } from '@wordpress/components';
 import { useEffect } from 'react';
 
 export default function Edit( { attributes, setAttributes } ) {
-	return (
-		<>
-			<InspectorControls>
-				<PanelBody title={ __( 'Settings', 'hal-publications' ) }>
-				</PanelBody>
-			</InspectorControls>
-			<p { ...useBlockProps() }>HAL publications</p>
-		</>
-	);
+    const { hh_query } = attributes;
+    return (
+	    <>
+	    <InspectorControls>
+	    <PanelBody title={ __( 'Settings', 'hal-publications' ) }>
+            <TextControl
+        __nextHasNoMarginBottom
+        __next40pxDefaultSize
+        label={ __(
+            'Query',
+            'harvest-hal'
+        ) }
+        value={ hh_query||''}
+        onChange={ ( value ) =>
+            setAttributes( { hh_query: value } )
+        }
+            />
+	</PanelBody>
+	    </InspectorControls>
+	    <p { ...useBlockProps() }>HAL publications</p>
+	    </>
+    );
 }

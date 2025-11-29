@@ -1,15 +1,15 @@
 <?php
 /**
- * Plugin Name:       hal-publications
+* Plugin Name:       hal-publications
 
- * Description:       Query https://api.archives-ouvertes.fr/ and desplay the result
- * Version:           0.1.0
- * Requires at least: 6.7
- * Requires PHP:      7.4
- * Author:            David Vanderhaeghe
- * License:           GPL-2.0-or-later
- * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       harvest-hal
+* Description:       Query https://api.archives-ouvertes.fr/ and desplay the result
+* Version:           0.1.0
+* Requires at least: 6.7
+* Requires PHP:      7.4
+* Author:            David Vanderhaeghe
+* License:           GPL-2.0-or-later
+* License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+* Text Domain:       harvest-hal
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -28,7 +28,6 @@ function hh_hal_block_init() {
 }
 
 add_action( 'init', 'hh_hal_block_init' );
-
 
 function hh_curl_download($Url){
   // is cURL installed yet?
@@ -215,10 +214,14 @@ function hh_write_log( $data ) {
   }
 }
 
-function hh_download_json(){
+function hh_download_json($query){
   $fl="halId_s,source_s,description_s,authorityInstitution_s,bookTitle_s,page_s,title_s,authFullName_s,docType_s,journalTitle_s,conferenceTitle_s,fileMain_s,uri_s,authLastName_s,authFirstName_s,thumbId_i,producedDate_tdate,producedDateY_i,comment_s,seeAlso_s";
 
   $q=urlencode('authIdHal_s:("vdh"OR"nicolas-mellado"OR"mathias-paulin"OR"loic-barthe"OR"megane-bati") OR structId_i:(1001793 OR 1612886)');
+  if(!empty($query)){
+    $q = urlencode($query);
+  }
+  
   $url = "https://api.archives-ouvertes.fr/search/?q=".$q."&wt=json&fl=".$fl."&sort=producedDate_tdate%20desc&rows=1000";  
   $json = hh_curl_download($url );
   hh_write_log($url);
@@ -242,10 +245,8 @@ function hh_filter( $publis ){
   return array_filter($publis, "hh_filter_hal_ids");
 }
 
-
-
-function hh_print_publications(){
-  $publis = hh_filter(hh_download_json());
+function hh_print_publications($query){
+  $publis = hh_filter(hh_download_json($query));
   $year = $publis[0]["producedDateY_i"];
   $result='';
 
