@@ -11,6 +11,7 @@ import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import {
     PanelBody,
     TextControl,
+    TextareaControl,
     BaseControl,
     Flex,
     FlexBlock,
@@ -25,7 +26,7 @@ import ServerSideRender from '@wordpress/server-side-render';
 
 export default function Edit( { attributes, setAttributes } ) {
     const blockProps = useBlockProps();
-    const { hh_query, hh_author_pages =[], hh_hal_ids_to_skip } = attributes;
+    const { hh_query, hh_author_pages =[], hh_hal_ids_to_skip, hh_custom_css } = attributes;
     
     // Add a new empty pair
     const addAuthorPage = () => {
@@ -168,8 +169,17 @@ export default function Edit( { attributes, setAttributes } ) {
             >
             Add HAL ID
         </Button>
-
-	</PanelBody>
+	    </PanelBody>
+  <PanelBody title="CSS customization" initialOpen={ false }>
+                    <TextareaControl
+                        label="Custom CSS"
+                        help="Target elements inside the block, for example: .authors { font-weight: bold; }"
+                        value={ hh_custom_css }
+                        onChange={ value => setAttributes({ hh_custom_css: value }) }
+                        rows={ 6 }
+                    />
+                </PanelBody>
+        
 	    </InspectorControls>
 	    <div { ...blockProps }>
             <h2> Publication list preview (with [HAL id], not shown on frontend)</h2>

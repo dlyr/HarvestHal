@@ -332,3 +332,24 @@ function hh_print_publications($attributes){
   return $result;
 }
 
+
+function hh_render_publications_block( $attributes ) {
+
+    // Generate the publication list
+    $content = hh_print_publications( $attributes );
+
+    // Custom CSS injection
+    $css = '';
+    if ( ! empty( $attributes['hh_custom_css'] ) ) {
+        $css = '<style>
+            .wp-block-dlyr-hal-publications {
+                ' . $attributes['hh_custom_css'] . '
+            }
+        </style>';
+    }
+
+    return '<div '. get_block_wrapper_attributes() . '>
+            ' . $css . '
+            ' . $content . '
+        </div>';
+}
