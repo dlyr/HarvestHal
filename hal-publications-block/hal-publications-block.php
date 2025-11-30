@@ -118,52 +118,98 @@ function hh_get_publi_authors($p, $attributes=[]){
   return $result;
 }
 
-function hh_get_publi_links($p, $attributes=[]){
-  $result ="";
-  $lowtitle = strtolower($p["title_s"][0]);
 
-  $printed=false;
-  if(hh_check_field($p, "fileMain_s")){
-    if($printed)$result.= " ";
-    $image_url = plugins_url( 'assets/PDF_file_icon.svg', __FILE__);   
-    $result .= '<a href="'.$p["fileMain_s"].'"><img src="'.esc_url($image_url).'" height="24" border="0" alt="download pdf" style="vertical-align:middle"/></a> ';
-    $printed=true;
+function hh_get_publi_links($p, $attributes = []) {
+
+  // --- Helper to build icon links -----------------------------------------
+  $icon = function( $file, $alt, $url ) {
+    $image_url = plugins_url( "assets/$file", __FILE__ );
+    return '<a href="' . esc_url($url) . '" target="_blank">'
+         . '<img src="' . esc_url($image_url) . '" height="24" style="vertical-align:middle" alt="' . esc_attr($alt) . '"/>'
+         . '</a>';
+  };
+
+  $result  = "";
+  $printed = false;
+
+  // --- Enforced order of link types ---------------------------------------
+  $ordered_types = [
+    'pdf',       // fileMain_s
+    'youtube',   // seeAlso_s contains youtu
+    'github',    // seeAlso_s contains github.com
+    'gitlab',    // seeAlso_s contains gitlab
+    'project',   // any other seeAlso link
+  ];
+
+  // --- 1. PDF link ---------------------------------------------------------
+  if (hh_check_field($p, "fileMain_s")) {
+    $result .= $icon('PDF_file_icon.svg', 'download pdf', $p["fileMain_s"]);
+    $printed = true;
   }
 
-  if(hh_check_field($p, "seeAlso_s"))
-  {
-    $result .= ' ';
-    foreach ($p["seeAlso_s"] as &$value) {      
-      if (strpos($value, "youtu") !== false) { // look for youtube and youtu.be
-        if($printed)$result.= " ";
-        $image_url = plugins_url( 'assets/YouTube.svg', __FILE__);   
-        $result.=  '<a href="'.$value.'" target="_blank"><img src="' . esc_url( $image_url ) . '"  height="24"  alt="link to video on YouTube"  style="vertical-align:middle" /></a>';
-        $printed=true;
+  // --- 2. Classify seeAlso links by type -----------------------------------
+  $links_by_type = [
+    'youtube' => [],
+    'github'  => [],
+    'gitlab'  => [],
+    'project' => [],
+  ];
+
+  if (hh_check_field($p, "seeAlso_s")) {
+    foreach ($p["seeAlso_s"] as $url) {
+
+      $u = strtolower($url);
+
+      if (strpos($u, "youtu") !== false) {
+        $links_by_type['youtube'][] = $url;
       }
-      else if (strpos($value, "github.com") !== false ){
-        if($printed)$result.= " ";
-        $image_url = plugins_url( 'assets/github.svg', __FILE__);   
-        $result.= '<a href="'.$value.'" target="_blank"><img src="' . esc_url( $image_url ) . '"  height="24"  alt="github repository"  style="vertical-align:middle" /></a>';
-        $printed=true;
+      elseif (strpos($u, "github.com") !== false) {
+        $links_by_type['github'][] = $url;
       }
-      else if( strpos($value, "gitlab") !== false ) {
-        if($printed)$result.= " ";
-        $image_url = plugins_url( 'assets/gitlab.svg', __FILE__);   
-        $result.= '<a href="'.$value.'" target="_blank"><img src="' . esc_url( $image_url ) . '"  height="24"  alt="gitlab repository"  style="vertical-align:middle" /></a>';
-        $printed=true;
+      elseif (strpos($u, "gitlab") !== false) {
+        $links_by_type['gitlab'][] = $url;
       }
       else {
-        if($printed)$result.= " ";
-        $result.=  '<a href="'.$value.'" target="_blank">project page</a>';
-        $printed=true;
+        $links_by_type['project'][] = $url;
       }
     }
-    $result .= '.';
-
   }
 
-  return $result;  
-}
+  // --- 3. Render all in the desired order ----------------------------------
+  foreach ($ordered_types as $type) {
+    if(isset ($links_by_type[$type])){
+      foreach ($links_by_type[$type] as $url) {
+
+        if ($printed) {
+          $result .= " ";
+        }
+
+        switch ($type) {
+          case 'youtube':
+            $result .= $icon('YouTube.svg', 'YouTube link', $url);
+            break;
+
+          case 'github':
+            $result .= $icon('github.svg', 'GitHub repository', $url);
+            break;
+
+          case 'gitlab':
+            $result .= $icon('gitlab.svg', 'GitLab repository', $url);
+            break;
+
+          case 'project':
+            // If you want a project icon someday, add it here.
+            $result .= '<a href="' . esc_url($url) . '" target="_blank">project page</a>';
+            break;
+        }
+
+        $printed = true;
+    }}
+    }
+
+      return $result;
+    }
+
 
 function hh_get_publi_infos($p){
   $result ="";
