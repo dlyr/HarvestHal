@@ -19,6 +19,10 @@
                     "page": { "type": "string" }
                 }
             }
+        },
+        "hh_hal_ids_to_skip": {
+            "type": "array",
+            "default": []
         }
     },
     "supports": {

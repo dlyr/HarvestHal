@@ -25,7 +25,7 @@ import ServerSideRender from '@wordpress/server-side-render';
 
 export default function Edit( { attributes, setAttributes } ) {
     const blockProps = useBlockProps();
-    const { hh_query, hh_author_pages =[] } = attributes;
+    const { hh_query, hh_author_pages =[], hh_hal_ids_to_skip } = attributes;
     
     // Add a new empty pair
     const addAuthorPage = () => {
@@ -47,6 +47,26 @@ export default function Edit( { attributes, setAttributes } ) {
         const next = hh_author_pages.filter( ( _ , i ) => i !== index );
         setAttributes({ hh_author_pages: next });
     };
+
+
+
+    const addSkipId = () => {
+        setAttributes({
+            hh_hal_ids_to_skip: [...hh_hal_ids_to_skip, ""]
+        });
+    };
+
+    const updateSkipId = (index, value) => {
+        const updated = [...hh_hal_ids_to_skip];
+        updated[index] = value;
+        setAttributes({ hh_hal_ids_to_skip: updated });
+    };
+
+    const removeSkipId = (index) => {
+        setAttributes({
+            hh_hal_ids_to_skip: hh_hal_ids_to_skip.filter((_, i) => i !== index)
+        });
+    };
     
     
     return (
@@ -66,9 +86,10 @@ export default function Edit( { attributes, setAttributes } ) {
             setAttributes( { hh_query: value } )
         }
             />
+            </PanelBody>
 
         {/* Author pages array */}
-                    <h3>{ __( 'Author Pages', 'hal-publications' ) }</h3>
+            <PanelBody title={ __( 'Author Pages', 'hal-publications' ) } initialOpen={false}>
             { hh_author_pages.length === 0 && (
                     <p style={{ fontStyle: 'italic', opacity: 0.7 }}>
                     No author page entries yet.
@@ -116,13 +137,42 @@ export default function Edit( { attributes, setAttributes } ) {
             >
             <Icon icon="plus" /> { __( 'Add Author Page', 'hal-publications' ) }
         </Button>
+            </PanelBody>
 
         
+            <PanelBody title="Filter (remove) HAL Ids" initialOpen={false}>
+
+        {hh_hal_ids_to_skip.map((id, index) => (
+                <Flex key={index} gap={4} align="center" className="hh-skip-id-row">
+                <FlexItem isBlock>
+                <TextControl
+            label={index === 0 ? "Skip HAL IDs" : ""}
+            value={id}
+            placeholder="hal-01234567"
+            onChange={(value) => updateSkipId(index, value)}
+                />
+                </FlexItem>
+                <Button
+            variant="secondary"
+            isDestructive
+            onClick={() => removeSkipId(index)}
+                >
+                Remove
+            </Button>
+                </Flex>
+        ))}
+
+            <Button
+        variant="primary"
+        onClick={addSkipId}
+            >
+            Add HAL ID
+        </Button>
 
 	</PanelBody>
 	    </InspectorControls>
 	    <div { ...blockProps }>
-            <h2> Publication list Preview</h2>
+            <h2> Publication list preview (with [HAL id], not shown on frontend)</h2>
             <ServerSideRender
         block="dlyr/hal-publications"
         attributes={ attributes }

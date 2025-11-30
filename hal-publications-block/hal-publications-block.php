@@ -80,9 +80,9 @@ function hh_get_publi_thumb($p){
 function hh_get_publi_title($p){
 
   $result ='';
+  $result .='<span class="hal-id">[' .$p["halId_s"].']</span>';
   if($p["uri_s"] != "") $result .= '<a href="'.$p["uri_s"].'">'.$p["title_s"][0].'</a>';
   else $result .= $p["title_s"][0];
-
   return $result;
 }
 
@@ -143,7 +143,7 @@ function hh_get_publi_links($p, $attributes = []) {
 
   // --- 1. PDF link ---------------------------------------------------------
   if (hh_check_field($p, "fileMain_s")) {
-    $result .= $icon('PDF_file_icon.svg', 'download pdf', $p["fileMain_s"]);
+    $result .= $icon('PDF_file_icon.svg', 'download '. $p["title_s"][0] . ' pdf file', $p["fileMain_s"]);
     $printed = true;
   }
 
@@ -186,29 +186,29 @@ function hh_get_publi_links($p, $attributes = []) {
 
         switch ($type) {
           case 'youtube':
-            $result .= $icon('YouTube.svg', 'YouTube link', $url);
+            $result .= $icon('YouTube.svg', 'YouTube link for ' . $p["title_s"][0], $url);
             break;
 
           case 'github':
-            $result .= $icon('github.svg', 'GitHub repository', $url);
+            $result .= $icon('github.svg', 'GitHub repository of ' . $p["title_s"][0], $url);
             break;
 
           case 'gitlab':
-            $result .= $icon('gitlab.svg', 'GitLab repository', $url);
+            $result .= $icon('gitlab.svg', 'GitLab repository of ' . $p["title_s"][0], $url);
             break;
 
           case 'project':
-            // If you want a project icon someday, add it here.
+            // Maybe a project icon someday, add it here.
             $result .= '<a href="' . esc_url($url) . '" target="_blank">project page</a>';
             break;
         }
 
         $printed = true;
     }}
-    }
+  }
 
-      return $result;
-    }
+  return $result;
+}
 
 
 function hh_get_publi_infos($p){
@@ -295,19 +295,18 @@ function hh_download_json($query){
   return $publis;
 }
 
-function hh_filter_hal_ids($var){
-  $hal_ids_to_skip = array("hal-04427294", 
-                           "hal-04425679",
-                           "hal-04335772",
-                           "hal-04264415",
-                           "hal-04244922",
-                           "hal-04264333");
-
-  return !in_array($var["halId_s"], $hal_ids_to_skip);
+function hh_filter_hal_ids($var, $hh_hal_ids_to_skip){
+  return !in_array($var["halId_s"], $hh_hal_ids_to_skip);
 }
 
-function hh_filter( $publis ){
-  return array_filter($publis, "hh_filter_hal_ids");
+function hh_filter( $publis, $attributes ){
+  $skip = isset($attributes["hh_hal_ids_to_skip"])
+  ? $attributes["hh_hal_ids_to_skip"]
+        : [];
+
+  return array_filter($publis, function($item) use ($skip) {
+    return hh_filter_hal_ids($item, $skip);
+  });
 }
 
 function hh_print_publications($attributes){
@@ -317,7 +316,7 @@ function hh_print_publications($attributes){
     $query = $attributes['hh_query'];
   }
   
-  $publis = hh_filter(hh_download_json($query));
+  $publis = hh_filter(hh_download_json($query), $attributes);
   $year = $publis[0]["producedDateY_i"];
   $result='';
 
