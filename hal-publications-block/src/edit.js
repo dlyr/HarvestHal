@@ -10,9 +10,11 @@ import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody, TextControl, ToggleControl } from '@wordpress/components';
 
 import { useEffect } from 'react';
+import ServerSideRender from '@wordpress/server-side-render';
 
 export default function Edit( { attributes, setAttributes } ) {
     const { hh_query } = attributes;
+    const blockProps = useBlockProps();
     return (
 	    <>
 	    <InspectorControls>
@@ -31,7 +33,13 @@ export default function Edit( { attributes, setAttributes } ) {
             />
 	</PanelBody>
 	    </InspectorControls>
-	    <p { ...useBlockProps() }>HAL publications</p>
-	    </>
+	    <div { ...blockProps }>
+            <h2> Publication list Preview</h2>
+                <ServerSideRender
+                    block="dlyr/hal-publications"
+                    attributes={ attributes }
+                />
+            </div>
+	    </>        
     );
 }

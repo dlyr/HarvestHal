@@ -1,17 +1,12 @@
-/**
- * Registers a new block provided a unique name and an object defining its behavior.
- *
- * @see https://developer.wordpress.org/block-editor/developers/block-api/#registering-a-block
- */
+
+import './style.scss';
+import './editor.scss';
+
 import { registerBlockType } from '@wordpress/blocks';
 
-/**
- * Internal dependencies
- */
 import Edit from './edit';
-import save from './save';
 import metadata from './block.json';
-import './style.scss';
+
 /**
  * Define a custom SVG icon for the block. This icon will appear in
  * the Inserter and when the user selects the block in the Editor.
@@ -29,5 +24,5 @@ const halIcon = (
 registerBlockType( metadata.name, {
 	icon: halIcon,
 	edit: Edit,
-	save,
+    save(){return null;},
 } );
