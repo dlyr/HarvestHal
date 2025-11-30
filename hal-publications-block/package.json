@@ -1,5 +1,5 @@
 {
-	"name": "hal-publications",
+	"name": "hal-publications-block",
 	"version": "0.1.0",
 	"description": "Query api.archives-ouvertes.fr and display the result",
 	"author": "David Vanderhaeghe",

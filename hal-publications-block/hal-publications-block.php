@@ -4,7 +4,7 @@
 
  * Description:       Query https://api.archives-ouvertes.fr/ and desplay the result
  * Version:           0.1.0
- * Requires at least: 6.7
+ * Requires at least: 6.6.1
  * Requires PHP:      7.4
  * Author:            David Vanderhaeghe
  * License:           GPL-2.0-or-later

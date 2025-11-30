@@ -93,7 +93,7 @@ function hh_get_publi_links($p, $attributes = []) {
 
 // --- Helper to build icon links -----------------------------------------
 $icon = function( $file, $alt, $url ) {
-$image_url = plugins_url( "../assets/$file", __FILE__ );
+$image_url = plugins_url( "../public/images/$file", __FILE__ );
 return '<a href="' . esc_url($url) . '" target="_blank">'
   . '<img src="' . esc_url($image_url) . '" height="24" style="vertical-align:middle" alt="' . esc_attr($alt) . '"/>'
   . '</a>';
