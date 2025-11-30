@@ -29,6 +29,16 @@ function hh_hal_block_init() {
 
 add_action( 'init', 'hh_hal_block_init' );
 
+function hh_write_log( $data ) {
+  if ( true === WP_DEBUG ) {
+    if ( is_array( $data ) || is_object( $data ) ) {
+      error_log( print_r( $data, true ) );
+    } else {
+      error_log( $data );
+    }
+  }
+}
+
 function hh_curl_download($Url){
   // is cURL installed yet?
   if (!function_exists('curl_init')){
@@ -76,14 +86,26 @@ function hh_get_publi_title($p){
   return $result;
 }
 
-function hh_get_publi_authors($p){
+function hh_get_publi_authors($p, $attributes=[]){
+  $authorpage=[];
 
-  $authorpage["loic-barthe"] = "https://www.irit.fr/~Loic.Barthe";
-  $authorpage["nicolas-mellado"] = "https://www.irit.fr/~Nicolas.Mellado";
-  $authorpage["mathias-paulin"] = "https://www.irit.fr/~Mathias.Paulin/";
-  $authorpage["vdh"] = "https://www.dlyr.fr";
-  $authorpage["megane-bati"] ="https://megane-bati.github.io/";
-  
+  if ( ! empty( $attributes['hh_author_pages'] ) ) {
+    hh_write_log("NOT EMPTY");  
+    foreach ( $attributes['hh_author_pages'] as $entry ) {
+      if ( ! empty( $entry['idHal'] ) && ! empty( $entry['page'] ) ) {
+        $authorpage[ $entry['idHal'] ] = $entry['page'];
+      }
+    }
+  }
+  else{
+    hh_write_log("EMPTY");  
+    $authorpage["loic-barthe"] = "https://www.irit.fr/~Loic.Barthe";
+    $authorpage["nicolas-mellado"] = "https://www.irit.fr/~Nicolas.Mellado";
+    $authorpage["mathias-paulin"] = "https://www.irit.fr/~Mathias.Paulin/";
+    $authorpage["vdh"] = "https://www.dlyr.fr";
+    $authorpage["megane-bati"] ="https://megane-bati.github.io/";
+  }
+
   $result ='';
   $c = count($p["authFullNameIdHal_fs"]);
   $i = 1;
@@ -107,7 +129,7 @@ function hh_get_publi_authors($p){
   return $result;
 }
 
-function hh_get_publi_links($p){
+function hh_get_publi_links($p, $attributes=[]){
   $result ="";
   $lowtitle = strtolower($p["title_s"][0]);
 
@@ -201,7 +223,7 @@ function hh_get_publi_infos($p){
 
 }
 
-function hh_print_publi($p){	
+function hh_print_publi($p, $attributes=[]){	
   $result="";
   $result .= '<div class="wp-block-columns is-layout-flex">';
 
@@ -213,7 +235,7 @@ function hh_print_publi($p){
   $result .= '<div class="wp-block-group is-vertical is-content-justification-left is-layout-flex" style="flex-direction: column; align-items: flex-start; gap:2px;"><p class="title">';
   $result .= hh_get_publi_title($p);
   $result .= '</p><p class="authors">';
-  $result .= hh_get_publi_authors($p);
+  $result .= hh_get_publi_authors($p, $attributes);
   $result .= '</p><p class="infos">';
   $result .= hh_get_publi_infos($p);
   $result .= '</p><p class="links">';
@@ -221,16 +243,6 @@ function hh_print_publi($p){
   $result .= '</p></div></div></div>';
   return $result;
 
-}
-
-function hh_write_log( $data ) {
-  if ( true === WP_DEBUG ) {
-    if ( is_array( $data ) || is_object( $data ) ) {
-      error_log( print_r( $data, true ) );
-    } else {
-      error_log( $data );
-    }
-  }
 }
 
 function hh_download_json($query){
@@ -263,7 +275,13 @@ function hh_filter( $publis ){
   return array_filter($publis, "hh_filter_hal_ids");
 }
 
-function hh_print_publications($query){
+function hh_print_publications($attributes){
+
+  $query='';
+  if ( isset( $attributes['hh_query'] ) ){
+    $query = $attributes['hh_query'];
+  }
+  
   $publis = hh_filter(hh_download_json($query));
   $year = $publis[0]["producedDateY_i"];
   $result='';
@@ -275,7 +293,7 @@ function hh_print_publications($query){
       $year = $p["producedDateY_i"];	
       $result.= '<h2>'.$year.'</h2>';
     }
-    $result .= hh_print_publi($p);
+    $result .= hh_print_publi($p, $attributes);
   }
   return $result;
 }

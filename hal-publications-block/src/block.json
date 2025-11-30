@@ -8,7 +8,18 @@
     "description": "Query https://api.archives-ouvertes.fr/ and display the result",
     "example": {},
     "attributes": {
-        "hh_query":{"type":"string"}
+        "hh_query":{"type":"string"},        
+        "hh_author_pages": {
+            "type": "array",
+            "default": [],
+            "items": {
+                "type": "object",
+                "properties": {
+                    "idHal": { "type": "string" },
+                    "page": { "type": "string" }
+                }
+            }
+        }
     },
     "supports": {
 	"color": {
