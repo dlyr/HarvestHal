@@ -1,12 +1,18 @@
 .wp-block-dlyr-hal-publications {
-  .authors, .note,  .infos, .links{
-  font-size:.8em;
-  }
-  p{
-    margin:0;
-    padding:0;
-  }
-  .hal-id{
-    display:none;
-  }
+
+	.authors,
+ .note,
+  .infos,
+ .links {
+		font-size: 0.8em;
+	}
+
+	p {
+		margin: 0;
+		padding: 0;
+	}
+
+	.hal-id {
+		display: none;
+	}
 }
