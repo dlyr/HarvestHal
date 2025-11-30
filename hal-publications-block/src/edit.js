@@ -7,8 +7,17 @@ import { __ } from '@wordpress/i18n';
 
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 
-import { PanelBody, TextControl, ToggleControl, Button } from '@wordpress/components';
 
+import {
+    PanelBody,
+    TextControl,
+    BaseControl,
+    Flex,
+    FlexBlock,
+    FlexItem,
+    Button,
+    Icon
+} from '@wordpress/components';
 import { useEffect } from 'react';
 import ServerSideRender from '@wordpress/server-side-render';
 
@@ -25,7 +34,7 @@ export default function Edit( { attributes, setAttributes } ) {
     };
 
     // Update a pair
-    const setAuthorPage = ( index, field, value ) => {
+    const updateAuthorPage = ( index, field, value ) => {
         const next = hh_author_pages.map( (item, i) => {
             if ( i !== index ) return item;
             return { ...item, [field]: value };
@@ -60,38 +69,55 @@ export default function Edit( { attributes, setAttributes } ) {
 
         {/* Author pages array */}
                     <h3>{ __( 'Author Pages', 'hal-publications' ) }</h3>
+            { hh_author_pages.length === 0 && (
+                    <p style={{ fontStyle: 'italic', opacity: 0.7 }}>
+                    No author page entries yet.
+                    </p>
+            )}
 
+        { hh_author_pages.map( (row, index) => (
+                <Flex key={ index } style={{ marginBottom: '8px' }}>
+                
+                <FlexBlock>
+                <TextControl
+            placeholder="idHal"
+            value={ row.idHal || '' }
+            onChange={ (v) => updateAuthorPage(index, 'idHal', v) }
+                />
+                </FlexBlock>
 
-                    { hh_author_pages.map( (item, index) => (
-                        <div key={index} style={{ marginBottom: '1em' }}>
-                            <TextControl
-                                label="idHal"
-                                value={ item.idHal }
-                                onChange={ (v) => setAuthorPage(index, "idHal", v) }
-                            />
-                            <TextControl
-                                label="Homepage URL"
-                                value={ item.page }
-                                onChange={ (v) => setAuthorPage(index, "page", v) }
-                            />
-                            <Button
-                                isDestructive
-                                onClick={ () => removeAuthorPage(index) }
-                            >
-                                Remove
-                            </Button>
-                        </div>
-                    ))}
+                <FlexBlock>
+                <TextControl
+            placeholder="URL"
+            value={ row.page || '' }
+            onChange={ (v) => updateAuthorPage(index, 'page', v) }
+                />
+                </FlexBlock>
 
-                    <Button
-                        variant="primary"
-                        onClick={ addAuthorPage }
-                    >
-                        { __( 'Add author page', 'hal-publications' ) }
-                    </Button>
+                <FlexItem>
+                <Button
+            icon="no-alt"
+            label="Remove"
+            onClick={ () => removeAuthorPage(index) }
+            isSecondary
+            isSmall
+            style={{ marginTop: '4px' }}
+                />
+                </FlexItem>
+
+            </Flex>
+        ))}
+
+            <Button
+        isSmall
+        variant="primary"
+        onClick={ addAuthorPage }
+        style={{ marginTop: '10px' }}
+            >
+            <Icon icon="plus" /> { __( 'Add Author Page', 'hal-publications' ) }
+        </Button>
 
         
-                 
 
 	</PanelBody>
 	    </InspectorControls>

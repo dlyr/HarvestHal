@@ -90,20 +90,11 @@ function hh_get_publi_authors($p, $attributes=[]){
   $authorpage=[];
 
   if ( ! empty( $attributes['hh_author_pages'] ) ) {
-    hh_write_log("NOT EMPTY");  
     foreach ( $attributes['hh_author_pages'] as $entry ) {
       if ( ! empty( $entry['idHal'] ) && ! empty( $entry['page'] ) ) {
         $authorpage[ $entry['idHal'] ] = $entry['page'];
       }
     }
-  }
-  else{
-    hh_write_log("EMPTY");  
-    $authorpage["loic-barthe"] = "https://www.irit.fr/~Loic.Barthe";
-    $authorpage["nicolas-mellado"] = "https://www.irit.fr/~Nicolas.Mellado";
-    $authorpage["mathias-paulin"] = "https://www.irit.fr/~Mathias.Paulin/";
-    $authorpage["vdh"] = "https://www.dlyr.fr";
-    $authorpage["megane-bati"] ="https://megane-bati.github.io/";
   }
 
   $result ='';
@@ -116,10 +107,8 @@ function hh_get_publi_authors($p, $attributes=[]){
     $idHal = "dummy";
     if(isset($auth[1])) $idHal = $auth[1];
     
-    //    $p["authFirstNameIni_s"][$key] = substr($p["authFirstName_s"][$key],0,1).".";
-
-    // compute name and add link to author page if needed
-    $currentname = $name;//$p["authFirstNameIni_s"][$key]." ".$p["authLastName_s"][$key];
+    // get name and add link to author page if needed
+    $currentname = $name;
     // add links to authors webpages
     if(isset($idHal) && isset($authorpage[$idHal]))
       $currentname = "<a href=\"$authorpage[$idHal]\" target=\"_blank\">$currentname</a>";
@@ -133,44 +122,44 @@ function hh_get_publi_links($p, $attributes=[]){
   $result ="";
   $lowtitle = strtolower($p["title_s"][0]);
 
-  $acmlink["a benchmark for rough sketch cleanup"] = "https://dl.acm.org/doi/10.1145/3414685.3417784?cid=81319503065";
-  $acmlink["dynamic stylized shading primitives"] = "https://dl.acm.org/doi/10.1145/3072959.3073650?cid=81319503065";
-  $acmlink["a dynamic drawing algorithm for interactive painterly rendering"] = "https://dl.acm.org/doi/10.1145/2024676.2024693?cid=81319503065";
-  $acmlink["constrained palette-space exploration"] ="http://dl.acm.org/authorize?N42654";
-
   $printed=false;
   if(hh_check_field($p, "fileMain_s")){
     if($printed)$result.= " ";
-    $result .= '<a href="'.$p["fileMain_s"].'"><img src="http://www.dlyr.fr/data/Haltools_pdf.png" width="24" height="24" border="0" alt="download pdf" style="vertical-align:middle"/></a> ';
+    $image_url = plugins_url( 'assets/PDF_file_icon.svg', __FILE__);   
+    $result .= '<a href="'.$p["fileMain_s"].'"><img src="'.esc_url($image_url).'" height="24" border="0" alt="download pdf" style="vertical-align:middle"/></a> ';
     $printed=true;
   }
-  if(isset($acmlink[$lowtitle])){
-    if($printed)$result.= " ";
-    $result .= '<a href="'.$acmlink[$lowtitle].'"><img src="http://dl.acm.org/images/oa.gif" width="24" height="24" border="0" alt="ACM DL Author-ize service" style="vertical-align:middle"/></a> ';
-    $printed=true;
-  }
+
   if(hh_check_field($p, "seeAlso_s"))
   {
     $result .= ' ';
-    foreach ($p["seeAlso_s"] as &$value) {
-      
+    foreach ($p["seeAlso_s"] as &$value) {      
       if (strpos($value, "youtu") !== false) { // look for youtube and youtu.be
         if($printed)$result.= " ";
-        $image_url = plugins_url( 'assets/YouTube.webp', __FILE__);   
+        $image_url = plugins_url( 'assets/YouTube.svg', __FILE__);   
         $result.=  '<a href="'.$value.'" target="_blank"><img src="' . esc_url( $image_url ) . '"  height="24"  alt="link to video on YouTube"  style="vertical-align:middle" /></a>';
         $printed=true;
       }
-      else if (strpos($value, "github.com") !== false || strpos($value, "gitlab") !== false ) {
+      else if (strpos($value, "github.com") !== false ){
         if($printed)$result.= " ";
-        $result.= '<a href="'.$value.'" target="_blank">code</a>';
+        $image_url = plugins_url( 'assets/github.svg', __FILE__);   
+        $result.= '<a href="'.$value.'" target="_blank"><img src="' . esc_url( $image_url ) . '"  height="24"  alt="github repository"  style="vertical-align:middle" /></a>';
+        $printed=true;
+      }
+      else if( strpos($value, "gitlab") !== false ) {
+        if($printed)$result.= " ";
+        $image_url = plugins_url( 'assets/gitlab.svg', __FILE__);   
+        $result.= '<a href="'.$value.'" target="_blank"><img src="' . esc_url( $image_url ) . '"  height="24"  alt="gitlab repository"  style="vertical-align:middle" /></a>';
         $printed=true;
       }
       else {
         if($printed)$result.= " ";
         $result.=  '<a href="'.$value.'" target="_blank">project page</a>';
         $printed=true;
-    }}
+      }
+    }
     $result .= '.';
+
   }
 
   return $result;  
