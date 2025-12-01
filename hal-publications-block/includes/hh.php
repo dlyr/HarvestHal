@@ -47,9 +47,9 @@ function hh_image($file, $alt, $class){
 function hh_get_publi_thumb($p){
   $result="";
   if(hh_check_field($p,"thumbId_i")) {
-    $result .= '<img src="https://thumb.ccsd.cnrs.fr/'.$p["thumbId_i"].'/" alt="Publication thumbnail"/>';}
+    $result .= '<img src="https://thumb.ccsd.cnrs.fr/'.$p["thumbId_i"].'/" alt="Publication thumbnail" class="thumbnail"/>';}
   else {
-    $result .= hh_image("none.png", "Publication thumbnail");
+    $result .= hh_image("none.png", "Publication thumbnail", "thumbnail");
   }
   return $result;
 }
@@ -97,6 +97,7 @@ function hh_get_publi_authors($p, $attributes=[]){
     $result .=  $currentname;
     if($i++ < $c) $result .= ", ";
   }
+  $result .= ".";
   return $result;
 }
 
@@ -240,13 +241,12 @@ function hh_print_publi($p, $attributes=[]){
   
   $result="";
   $result .= '<div class="wp-block-columns is-layout-flex">';
-
-  $result .= '<div class="wp-block-column is-layout-flow" style="flex-basis:126px;flex-grow: 0;">';
-  $result .= '<figure class="wp-block-image size-full" style="text-align: center;max-width: 126px;max-height:96px;margin-left: auto !important;margin-right: auto !important;">';
+  $result .= '<div class="wp-block-column is-layout-flow thumbnail">';
+  $result .= '<figure class="wp-block-image size-full thumbnail">';
   $result .= hh_get_publi_thumb($p);
   $result .= '</figure></div>';
-  $result .= '<div class="wp-block-column is-content-justification-left is-layout-constrained" style="flex-basis: 0;flex-grow: 1;">';
-  $result .= '<div class="wp-block-group is-vertical is-content-justification-left is-layout-flex" style="flex-direction: column; align-items: flex-start; gap:2px;">';
+  $result .= '<div class="wp-block-column is-content-justification-left is-layout-constrained publication-column">';
+  $result .= '<div class="wp-block-group is-vertical is-content-justification-left is-layout-flex publication-group">';
   $result .= '<p class="title">' . hh_get_publi_title($p) . '</p>';
   $result .= '<p class="authors">' .  hh_get_publi_authors($p, $attributes) . '</p>';
   $result .= '<p class="infos">' . hh_get_publi_infos($p) .'</p>';

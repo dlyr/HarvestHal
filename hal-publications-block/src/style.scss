@@ -1,9 +1,8 @@
 .wp-block-dlyr-hal-publications {
 
 	.authors,
- .note,
-  .infos,
- .links {
+	.infos,
+	.links {
 		font-size: 0.8em;
 	}
 
@@ -15,11 +14,33 @@
 	.hal-id {
 		display: none;
 	}
-  img.link {
-    height:24px;
-    vertical-align:middle;
-  }
 
+	img.link {
+		height: 24px;
+		vertical-align: middle;
+	}
+
+	figure.thumbnail {
+		text-align: center;
+		max-width: 126px;
+		max-height: 96px;
+		margin-left: auto !important;
+		margin-right: auto !important;
+	}
+
+	div.thumbnail {
+		flex-basis: 126px !important;
+		flex-grow: 0 !important;
+	}
+
+	.publication-column {
+		flex-basis: 0;
+		flex-grow: 1;
+	}
+
+	.publication-group {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 2px;
+	}
 }
-
-
