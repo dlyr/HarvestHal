@@ -229,9 +229,6 @@ function hh_get_publi_infos($p){
   if(hh_check_field($p, "comment_s")){
     $result .= '.  <span class="note">'.$p["comment_s"].'</span>';
   }
-  //  if(hh_check_field($p, "description_s")){
-  //    $result .= '.  <span class="note">'.$p["description_s"].'</span>';
-  //  }
 
   return $result;
 
@@ -257,7 +254,25 @@ function hh_print_publi($p, $attributes=[]){
 }
 
 function hh_download_json($query){
-  $fl="halId_s,source_s,description_s,authorityInstitution_s,bookTitle_s,page_s,title_s,authFullName_s,docType_s,journalTitle_s,conferenceTitle_s,fileMain_s,uri_s,authFullNameIdHal_fs,thumbId_i,producedDate_tdate,producedDateY_i,comment_s,seeAlso_s";
+
+  $fl = "";
+  
+  $fl .= "halId_s,";
+  $fl .= "docType_s,";
+  $fl .= "title_s,";
+  $fl .= "uri_s,";
+  $fl .= "source_s,";
+  $fl .= "bookTitle_s,";
+  $fl .= "journalTitle_s,";
+  $fl .= "conferenceTitle_s,";
+  $fl .= "producedDate_tdate,";
+  $fl .= "producedDateY_i,";
+  $fl .= "authorityInstitution_s,";
+  $fl .= "authFullNameIdHal_fs,";
+  $fl .= "comment_s,";
+  $fl .= "thumbId_i,";
+  $fl .= "fileMain_s,";
+  $fl .= "seeAlso_s";
 
   $q=urlencode($query);
 

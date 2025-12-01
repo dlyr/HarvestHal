@@ -192,11 +192,9 @@ export default function Edit( { attributes, setAttributes } ) {
 				</PanelBody>
 			</InspectorControls>
 			<div { ...blockProps }>
-				<h2>
-					{ ' ' }
-					Publication list preview (with [HAL id], not shown on
-					frontend)
-				</h2>
+				<hr /> Publication list preview (with [HAL id], not shown on
+				frontend)
+				<hr />
 				<ServerSideRender
 					block="dlyr/hal-publications"
 					attributes={ attributes }
