@@ -6,7 +6,7 @@ Install and activate hal-publication-block.zip plugin.
 
 Add hal-publications block to your page or post. Customize query, add author page link, filter some hadId, customize css, as you need. Query documentation is found on [hal api documentations](https://api.archives-ouvertes.fr/docs/search).
 
-https://github.com/dlyr/HarvestHal/blob/main/demo.mp4
+https://github.com/user-attachments/assets/167dd93c-03aa-4f81-a129-ea44474a8986
 
 ## Html output
 
