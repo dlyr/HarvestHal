@@ -13,10 +13,10 @@ return array(
 			
 		),
 		'attributes' => array(
-			'hh_query' => array(
+			'hhQuery' => array(
 				'type' => 'string'
 			),
-			'hh_author_pages' => array(
+			'hhAuthorPages' => array(
 				'type' => 'array',
 				'default' => array(
 					
@@ -33,13 +33,13 @@ return array(
 					)
 				)
 			),
-			'hh_hal_ids_to_skip' => array(
+			'hhHalIdsToSkip' => array(
 				'type' => 'array',
 				'default' => array(
 					
 				)
 			),
-			'hh_custom_css' => array(
+			'hhCustomCss' => array(
 				'type' => 'string',
 				'default' => ''
 			)

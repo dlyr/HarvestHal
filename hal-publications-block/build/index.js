@@ -8,7 +8,7 @@
   \************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"dlyr/hal-publications","version":"0.1.0","title":"Hal Publications","category":"widgets","description":"Query https://api.archives-ouvertes.fr/ and display the result","example":{},"attributes":{"hh_query":{"type":"string"},"hh_author_pages":{"type":"array","default":[],"items":{"type":"object","properties":{"idHal":{"type":"string"},"page":{"type":"string"}}}},"hh_hal_ids_to_skip":{"type":"array","default":[]},"hh_custom_css":{"type":"string","default":""}},"supports":{"color":{"background":false,"text":true},"html":false,"typography":{"fontSize":true}},"textdomain":"harvest-hal","editorScript":"file:./index.js","render":"file:./render.php","style":"file:./style-index.css","editorStyle":"file:./index.css"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"dlyr/hal-publications","version":"0.1.0","title":"Hal Publications","category":"widgets","description":"Query https://api.archives-ouvertes.fr/ and display the result","example":{},"attributes":{"hhQuery":{"type":"string"},"hhAuthorPages":{"type":"array","default":[],"items":{"type":"object","properties":{"idHal":{"type":"string"},"page":{"type":"string"}}}},"hhHalIdsToSkip":{"type":"array","default":[]},"hhCustomCss":{"type":"string","default":""}},"supports":{"color":{"background":false,"text":true},"html":false,"typography":{"fontSize":true}},"textdomain":"harvest-hal","editorScript":"file:./index.js","render":"file:./render.php","style":"file:./style-index.css","editorStyle":"file:./index.css"}');
 
 /***/ }),
 
@@ -48,26 +48,26 @@ function Edit({
 }) {
   const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)();
   const {
-    hh_query,
-    hh_author_pages = [],
-    hh_hal_ids_to_skip,
-    hh_custom_css
+    hhQuery,
+    hhAuthorPages = [],
+    hhHalIdsToSkip,
+    hhCustomCss
   } = attributes;
 
   // Add a new empty pair
   const addAuthorPage = () => {
-    const next = [...hh_author_pages, {
+    const next = [...hhAuthorPages, {
       idHal: '',
       page: ''
     }];
     setAttributes({
-      hh_author_pages: next
+      hhAuthorPages: next
     });
   };
 
   // Update a pair
   const updateAuthorPage = (index, field, value) => {
-    const next = hh_author_pages.map((item, i) => {
+    const next = hhAuthorPages.map((item, i) => {
       if (i !== index) {
         return item;
       }
@@ -77,32 +77,32 @@ function Edit({
       };
     });
     setAttributes({
-      hh_author_pages: next
+      hhAuthorPages: next
     });
   };
 
   // Remove a pair
   const removeAuthorPage = index => {
-    const next = hh_author_pages.filter((_, i) => i !== index);
+    const next = hhAuthorPages.filter((_, i) => i !== index);
     setAttributes({
-      hh_author_pages: next
+      hhAuthorPages: next
     });
   };
   const addSkipId = () => {
     setAttributes({
-      hh_hal_ids_to_skip: [...hh_hal_ids_to_skip, '']
+      hhHalIdsToSkip: [...hhHalIdsToSkip, '']
     });
   };
   const updateSkipId = (index, value) => {
-    const updated = [...hh_hal_ids_to_skip];
+    const updated = [...hhHalIdsToSkip];
     updated[index] = value;
     setAttributes({
-      hh_hal_ids_to_skip: updated
+      hhHalIdsToSkip: updated
     });
   };
   const removeSkipId = index => {
     setAttributes({
-      hh_hal_ids_to_skip: hh_hal_ids_to_skip.filter((_, i) => i !== index)
+      hhHalIdsToSkip: hhHalIdsToSkip.filter((_, i) => i !== index)
     });
   };
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.Fragment, {
@@ -113,21 +113,21 @@ function Edit({
           __nextHasNoMarginBottom: true,
           __next40pxDefaultSize: true,
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Query', 'harvest-hal'),
-          value: hh_query || '',
+          value: hhQuery || '',
           onChange: value => setAttributes({
-            hh_query: value
+            hhQuery: value
           })
         })
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
         title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Author Pages', 'hal-publications'),
         initialOpen: false,
-        children: [hh_author_pages.length === 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
+        children: [hhAuthorPages.length === 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
           style: {
             fontStyle: 'italic',
             opacity: 0.7
           },
           children: "No author page entries yet."
-        }), hh_author_pages.map((row, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Flex, {
+        }), hhAuthorPages.map((row, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Flex, {
           style: {
             marginBottom: '8px'
           },
@@ -169,7 +169,7 @@ function Edit({
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
         title: "Filter (remove) HAL Ids",
         initialOpen: false,
-        children: [hh_hal_ids_to_skip.map((id, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Flex, {
+        children: [hhHalIdsToSkip.map((id, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Flex, {
           gap: 4,
           align: "center",
           className: "hh-skip-id-row",
@@ -198,9 +198,9 @@ function Edit({
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextareaControl, {
           label: "Custom CSS",
           help: "Target elements inside the block, for example: .authors { font-weight: bold; }",
-          value: hh_custom_css,
+          value: hhCustomCss,
           onChange: value => setAttributes({
-            hh_custom_css: value
+            hhCustomCss: value
           }),
           rows: 6
         })

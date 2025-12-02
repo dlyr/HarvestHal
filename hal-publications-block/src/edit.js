@@ -22,50 +22,50 @@ import ServerSideRender from '@wordpress/server-side-render';
 export default function Edit( { attributes, setAttributes } ) {
 	const blockProps = useBlockProps();
 	const {
-		hh_query,
-		hh_author_pages = [],
-		hh_hal_ids_to_skip,
-		hh_custom_css,
+		hhQuery,
+		hhAuthorPages = [],
+		hhHalIdsToSkip,
+		hhCustomCss,
 	} = attributes;
 
 	// Add a new empty pair
 	const addAuthorPage = () => {
-		const next = [ ...hh_author_pages, { idHal: '', page: '' } ];
-		setAttributes( { hh_author_pages: next } );
+		const next = [ ...hhAuthorPages, { idHal: '', page: '' } ];
+		setAttributes( { hhAuthorPages: next } );
 	};
 
 	// Update a pair
 	const updateAuthorPage = ( index, field, value ) => {
-		const next = hh_author_pages.map( ( item, i ) => {
+		const next = hhAuthorPages.map( ( item, i ) => {
 			if ( i !== index ) {
 				return item;
 			}
 			return { ...item, [ field ]: value };
 		} );
-		setAttributes( { hh_author_pages: next } );
+		setAttributes( { hhAuthorPages: next } );
 	};
 
 	// Remove a pair
 	const removeAuthorPage = ( index ) => {
-		const next = hh_author_pages.filter( ( _, i ) => i !== index );
-		setAttributes( { hh_author_pages: next } );
+		const next = hhAuthorPages.filter( ( _, i ) => i !== index );
+		setAttributes( { hhAuthorPages: next } );
 	};
 
 	const addSkipId = () => {
 		setAttributes( {
-			hh_hal_ids_to_skip: [ ...hh_hal_ids_to_skip, '' ],
+			hhHalIdsToSkip: [ ...hhHalIdsToSkip, '' ],
 		} );
 	};
 
 	const updateSkipId = ( index, value ) => {
-		const updated = [ ...hh_hal_ids_to_skip ];
+		const updated = [ ...hhHalIdsToSkip ];
 		updated[ index ] = value;
-		setAttributes( { hh_hal_ids_to_skip: updated } );
+		setAttributes( { hhHalIdsToSkip: updated } );
 	};
 
 	const removeSkipId = ( index ) => {
 		setAttributes( {
-			hh_hal_ids_to_skip: hh_hal_ids_to_skip.filter(
+			hhHalIdsToSkip: hhHalIdsToSkip.filter(
 				( _, i ) => i !== index
 			),
 		} );
@@ -75,14 +75,14 @@ export default function Edit( { attributes, setAttributes } ) {
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Settings', 'hal-publications' ) }>
-					{ /* hh_query field */ }
+					{ /* hhQuery field */ }
 					<TextControl
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
 						label={ __( 'Query', 'harvest-hal' ) }
-						value={ hh_query || '' }
+						value={ hhQuery || '' }
 						onChange={ ( value ) =>
-							setAttributes( { hh_query: value } )
+							setAttributes( { hhQuery: value } )
 						}
 					/>
 				</PanelBody>
@@ -92,13 +92,13 @@ export default function Edit( { attributes, setAttributes } ) {
 					title={ __( 'Author Pages', 'hal-publications' ) }
 					initialOpen={ false }
 				>
-					{ hh_author_pages.length === 0 && (
+					{ hhAuthorPages.length === 0 && (
 						<p style={ { fontStyle: 'italic', opacity: 0.7 } }>
 							No author page entries yet.
 						</p>
 					) }
 
-					{ hh_author_pages.map( ( row, index ) => (
+					{ hhAuthorPages.map( ( row, index ) => (
 						<Flex key={ index } style={ { marginBottom: '8px' } }>
 							<FlexBlock>
 								<TextControl
@@ -148,7 +148,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					title="Filter (remove) HAL Ids"
 					initialOpen={ false }
 				>
-					{ hh_hal_ids_to_skip.map( ( id, index ) => (
+					{ hhHalIdsToSkip.map( ( id, index ) => (
 						<Flex
 							key={ index }
 							gap={ 4 }
@@ -183,9 +183,9 @@ export default function Edit( { attributes, setAttributes } ) {
 					<TextareaControl
 						label="Custom CSS"
 						help="Target elements inside the block, for example: .authors { font-weight: bold; }"
-						value={ hh_custom_css }
+						value={ hhCustomCss }
 						onChange={ ( value ) =>
-							setAttributes( { hh_custom_css: value } )
+							setAttributes( { hhCustomCss: value } )
 						}
 						rows={ 6 }
 					/>

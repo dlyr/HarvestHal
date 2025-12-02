@@ -8,8 +8,8 @@
 	"description": "Query https://api.archives-ouvertes.fr/ and display the result",
 	"example": {},
 	"attributes": {
-		"hh_query": { "type": "string" },
-		"hh_author_pages": {
+		"hhQuery": { "type": "string" },
+		"hhAuthorPages": {
 			"type": "array",
 			"default": [],
 			"items": {
@@ -20,11 +20,11 @@
 				}
 			}
 		},
-		"hh_hal_ids_to_skip": {
+		"hhHalIdsToSkip": {
 			"type": "array",
 			"default": []
 		},
-		"hh_custom_css": {
+		"hhCustomCss": {
 			"type": "string",
 			"default": ""
 		}

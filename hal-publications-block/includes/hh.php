@@ -71,8 +71,8 @@ function hh_get_publi_title($p){
 function hh_get_publi_authors($p, $attributes=[]){
   $authorpage=[];
 
-  if ( ! empty( $attributes['hh_author_pages'] ) ) {
-    foreach ( $attributes['hh_author_pages'] as $entry ) {
+  if ( ! empty( $attributes['hhAuthorPages'] ) ) {
+    foreach ( $attributes['hhAuthorPages'] as $entry ) {
       if ( ! empty( $entry['idHal'] ) && ! empty( $entry['page'] ) ) {
         $authorpage[ $entry['idHal'] ] = $entry['page'];
       }
@@ -284,7 +284,7 @@ function hh_download_json($query){
 }
 
 function hh_filter( $publis, $attributes ){
-  $skip = isset($attributes["hh_hal_ids_to_skip"]) ? $attributes["hh_hal_ids_to_skip"] : [];
+  $skip = isset($attributes["hhHalIdsToSkip"]) ? $attributes["hhHalIdsToSkip"] : [];
 
   return array_filter($publis, function($item) use ($skip) {
     return !in_array($item["halId_s"], $skip);
@@ -294,8 +294,8 @@ function hh_filter( $publis, $attributes ){
 function hh_print_publications($attributes){
 
   $query='*';
-  if ( isset( $attributes['hh_query'] ) ){
-    $query = $attributes['hh_query'];
+  if ( isset( $attributes['hhQuery'] ) ){
+    $query = $attributes['hhQuery'];
   }
 
   $publis = hh_filter(hh_download_json($query), $attributes);
@@ -321,8 +321,8 @@ function hh_render_publications_block( $attributes ) {
 
   // Custom CSS injection
   $css = '';
-  if ( ! empty( $attributes['hh_custom_css'] ) ) {
-    $css = '<style> .wp-block-dlyr-hal-publications { ' . $attributes['hh_custom_css'] . ' }</style>';
+  if ( ! empty( $attributes['hhCustomCss'] ) ) {
+    $css = '<style> .wp-block-dlyr-hal-publications { ' . $attributes['hhCustomCss'] . ' }</style>';
   }
 
   return '<div ' . get_block_wrapper_attributes() . '>' . $css . ' ' . $content . '</div>';
