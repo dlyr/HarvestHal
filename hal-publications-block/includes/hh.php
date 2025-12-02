@@ -1,4 +1,5 @@
 <?php
+
 function hh_write_log( $data ) {
   if ( true === WP_DEBUG ) {
     if ( is_array( $data ) || is_object( $data ) ) {
@@ -12,7 +13,7 @@ function hh_write_log( $data ) {
 function hh_curl_download($Url){
   // is cURL installed yet?
   if (!function_exists('curl_init')){
-    die('Sorry cURL is not installed!');
+    die(__('Sorry cURL is not installed!','harvest-hal'));
   }
 
   // OK cool - then let's create a new cURL resource handle
@@ -49,7 +50,7 @@ function hh_get_publi_thumb($p){
   if(hh_check_field($p,"thumbId_i")) {
     $result .= '<img src="https://thumb.ccsd.cnrs.fr/'.$p["thumbId_i"].'/" alt="Publication thumbnail" class="thumbnail"/>';}
   else {
-    $result .= hh_image("none.png", "Publication thumbnail", "thumbnail");
+    $result .= hh_image("none.png", __('Publication thumbnail', 'harvest_hal'), "thumbnail");
   }
   return $result;
 }
@@ -86,7 +87,6 @@ function hh_get_publi_authors($p, $attributes=[]){
     $c = count($p["authFullNameIdHal_fs"]);
     $i = 1;
     foreach ($p["authFullNameIdHal_fs"] as $key=>$author){
-
       $auth = explode("_FacetSep_", $author);
       $name = $auth[0];
       $idHal = "dummy";
@@ -104,6 +104,7 @@ function hh_get_publi_authors($p, $attributes=[]){
     return $result;
   }
 }
+
 
 function hh_get_publi_links($p, $attributes = []) {
 
@@ -126,7 +127,7 @@ function hh_get_publi_links($p, $attributes = []) {
 
   // --- 1. PDF link ---------------------------------------------------------
   if (hh_check_field($p, "fileMain_s")) {
-    $result .= $icon('PDF_file_icon.svg', 'download '. $p["title_s"][0] . ' pdf file', $p["fileMain_s"]);
+    $result .= $icon('PDF_file_icon.svg', __('download ', 'harvest-hal'). ' ' . $p["title_s"][0] . ' ' . __('pdf file','harvest_hal'), $p["fileMain_s"]);
     $printed = true;
   }
 
@@ -169,15 +170,15 @@ function hh_get_publi_links($p, $attributes = []) {
 
         switch ($type) {
           case 'youtube':
-            $result .= $icon('YouTube.svg', 'YouTube link for ' . $p["title_s"][0], $url);
+            $result .= $icon('YouTube.svg', __('YouTube link for','harvest-hal') . ' ' . $p["title_s"][0], $url);
             break;
 
           case 'github':
-            $result .= $icon('github.svg', 'GitHub repository of ' . $p["title_s"][0], $url);
+            $result .= $icon('github.svg', __('GitHub repository of', 'harvest-hal') . ' ' . $p["title_s"][0], $url);
             break;
 
           case 'gitlab':
-            $result .= $icon('gitlab.svg', 'GitLab repository of ' . $p["title_s"][0], $url);
+            $result .= $icon('gitlab.svg', __('GitLab repository of', 'harvest-hal'). ' ' . $p["title_s"][0], $url);
             break;
 
           case 'project':
@@ -216,11 +217,27 @@ function hh_get_publi_infos($p){
   else if(hh_check_field($p,"docType_s")){
     $institution="";
     if(hh_check_field($p, "authorityInstitution_s")) $institution =", " . $p["authorityInstitution_s"][0];
-    if($p["docType_s"] === "HDR"){ $result .= "HDR" . $institution; 	$how= "docType_s"; }
-    if($p["docType_s"] === "THESE"){ $result .= "PhD. Thesis" . $institution; 	$how= "docType_s"; }
-    if($p["docType_s"] === "REPORT"){ $result .= "Research Report" . $institution;	$how= "docType_s"; }
-    if($p["docType_s"] === "MEM"){ $result .= "Master Thesis" . $institution;	$how="docType_s"; }   
-    if($p["docType_s"] === "POSTER"){ $result .= "Poster" . $how= "docType_s"; }    
+    switch($p["docType_s"]){
+      case "HDR":
+        $other = __('HDR', 'harvest-hal') . $institution;
+        break;
+      case "THESE":
+        $other = __('PhD. Thesis', 'harvest-hal') . $institution;
+        break;
+      case "REPORT":
+        $other = __('Research Report', 'harvest-hal') . $institution;
+        break;
+      case "MEM":
+        $other = __('Master Thesis', 'harvest-hal') . $institution;
+        break;
+      case "POSTER":
+        $other = __('Poster', 'harvest-hal');        
+        break;
+    }
+    if(isset($other)){
+      $result.=$other;
+      $how= "docType_s";
+    }
   }
 
   $printYear = true;

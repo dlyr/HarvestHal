@@ -92,7 +92,7 @@ function Edit({
     hhEnabledFields
   } = attributes;
 
-  // Add a new empty pair
+  // --- author pages ----------------------------------------------------
   const addAuthorPage = () => {
     const next = [...hhAuthorPages, {
       idHal: '',
@@ -102,8 +102,6 @@ function Edit({
       hhAuthorPages: next
     });
   };
-
-  // Update a pair
   const updateAuthorPage = (index, field, value) => {
     const next = hhAuthorPages.map((item, i) => {
       if (i !== index) {
@@ -118,14 +116,14 @@ function Edit({
       hhAuthorPages: next
     });
   };
-
-  // Remove a pair
   const removeAuthorPage = index => {
     const next = hhAuthorPages.filter((_, i) => i !== index);
     setAttributes({
       hhAuthorPages: next
     });
   };
+
+  // --- HalIds to skip --------------------------------------------------
   const addSkipId = () => {
     setAttributes({
       hhHalIdsToSkip: [...hhHalIdsToSkip, '']
@@ -143,6 +141,8 @@ function Edit({
       hhHalIdsToSkip: hhHalIdsToSkip.filter((_, i) => i !== index)
     });
   };
+
+  // --- enables fields --------------------------------------------------
   const toggleField = key => {
     const newFields = hhEnabledFields.includes(key) ? hhEnabledFields.filter(f => f !== key) : [...hhEnabledFields, key];
     setAttributes({
@@ -152,7 +152,8 @@ function Edit({
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.Fragment, {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
-        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Settings', 'hal-publications'),
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Settings', 'harvest-hal'),
+        initialOpen: true,
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
           __nextHasNoMarginBottom: true,
           __next40pxDefaultSize: true,
@@ -163,93 +164,108 @@ function Edit({
           })
         })
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
-        title: "Fields to Display",
-        initialOpen: true,
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Fields to Display', 'harvest-hal'),
+        initialOpen: false,
         children: ALL_FIELDS.map(field => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.CheckboxControl, {
+          __nextHasNoMarginBottom: true,
           label: field.label,
           checked: hhEnabledFields.includes(field.key),
           onChange: () => toggleField(field.key)
         }, field.key))
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
-        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Author Pages', 'hal-publications'),
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Author Pages', 'harvest-hal'),
         initialOpen: false,
         children: [hhAuthorPages.length === 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
           style: {
             fontStyle: 'italic',
             opacity: 0.7
           },
-          children: "No author page entries yet."
+          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('No author page entries yet.', 'harvest-hal')
         }), hhAuthorPages.map((row, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Flex, {
           style: {
             marginBottom: '8px'
           },
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.FlexBlock, {
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+              __nextHasNoMarginBottom: true,
+              __next40pxDefaultSize: true,
               placeholder: "idHal",
               value: row.idHal || '',
               onChange: v => updateAuthorPage(index, 'idHal', v)
             })
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.FlexBlock, {
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+              __nextHasNoMarginBottom: true,
+              __next40pxDefaultSize: true,
               placeholder: "URL",
               value: row.page || '',
               onChange: v => updateAuthorPage(index, 'page', v)
             })
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.FlexItem, {
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+              __next40pxDefaultSize: true,
               icon: "no-alt",
               label: "Remove",
-              onClick: () => removeAuthorPage(index),
-              isSecondary: true,
-              isSmall: true,
-              style: {
-                marginTop: '4px'
-              }
+              isDestructive: true,
+              variant: "secondary",
+              size: "compact",
+              onClick: () => removeAuthorPage(index)
             })
           })]
         }, index)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
-          isSmall: true,
+          __next40pxDefaultSize: true,
           variant: "primary",
           onClick: addAuthorPage,
-          style: {
-            marginTop: '10px'
-          },
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Icon, {
             icon: "plus"
-          }), ' ', (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Add Author Page', 'hal-publications')]
+          }), ' ', (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Add Author Page', 'harvest-hal')]
         })]
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
-        title: "Filter (remove) HAL Ids",
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Filter (remove) HAL Ids', 'harvest-hal'),
         initialOpen: false,
-        children: [hhHalIdsToSkip.map((id, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Flex, {
-          gap: 4,
-          align: "center",
-          className: "hh-skip-id-row",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.FlexItem, {
-            isBlock: true,
+        children: [hhHalIdsToSkip.length === 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
+          style: {
+            fontStyle: 'italic',
+            opacity: 0.7
+          },
+          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('No HAL IDs to skip.', 'harvest-hal')
+        }), hhHalIdsToSkip.map((id, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Flex, {
+          style: {
+            marginBottom: '8px'
+          },
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.FlexBlock, {
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
-              label: index === 0 ? 'Skip HAL IDs' : '',
+              __nextHasNoMarginBottom: true,
+              __next40pxDefaultSize: true,
               value: id,
               placeholder: "hal-01234567",
               onChange: value => updateSkipId(index, value)
             })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
-            variant: "secondary",
-            isDestructive: true,
-            onClick: () => removeSkipId(index),
-            children: "Remove"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.FlexItem, {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+              __next40pxDefaultSize: true,
+              icon: "no-alt",
+              label: "Remove",
+              isDestructive: true,
+              variant: "secondary",
+              size: "compact",
+              onClick: () => removeSkipId(index)
+            })
           })]
-        }, index)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+        }, index)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+          __next40pxDefaultSize: true,
           variant: "primary",
           onClick: addSkipId,
-          children: "Add HAL ID"
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Icon, {
+            icon: "plus"
+          }), ' ', (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Add HAL ID', 'harvest-hal')]
         })]
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
         title: "CSS customization",
         initialOpen: false,
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextareaControl, {
           label: "Custom CSS",
-          help: "Target elements inside the block, for example: .authors { font-weight: bold; }",
+          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Target elements inside the block, for example: .authors { font-weight: bold; }', 'harvest-hal'),
           value: hhCustomCss,
           onChange: value => setAttributes({
             hhCustomCss: value

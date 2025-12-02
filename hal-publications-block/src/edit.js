@@ -48,13 +48,12 @@ export default function Edit( { attributes, setAttributes } ) {
 		hhEnabledFields,
 	} = attributes;
 
-	// Add a new empty pair
+	// --- author pages ----------------------------------------------------
 	const addAuthorPage = () => {
 		const next = [ ...hhAuthorPages, { idHal: '', page: '' } ];
 		setAttributes( { hhAuthorPages: next } );
 	};
 
-	// Update a pair
 	const updateAuthorPage = ( index, field, value ) => {
 		const next = hhAuthorPages.map( ( item, i ) => {
 			if ( i !== index ) {
@@ -65,12 +64,12 @@ export default function Edit( { attributes, setAttributes } ) {
 		setAttributes( { hhAuthorPages: next } );
 	};
 
-	// Remove a pair
 	const removeAuthorPage = ( index ) => {
 		const next = hhAuthorPages.filter( ( _, i ) => i !== index );
 		setAttributes( { hhAuthorPages: next } );
 	};
 
+	// --- HalIds to skip --------------------------------------------------
 	const addSkipId = () => {
 		setAttributes( {
 			hhHalIdsToSkip: [ ...hhHalIdsToSkip, '' ],
@@ -89,6 +88,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		} );
 	};
 
+	// --- enables fields --------------------------------------------------
 	const toggleField = ( key ) => {
 		const newFields = hhEnabledFields.includes( key )
 			? hhEnabledFields.filter( ( f ) => f !== key )
@@ -99,9 +99,12 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	return (
 		<>
+			{ /* --- editor controls ----------------------------*/ }
 			<InspectorControls>
-				<PanelBody title={ __( 'Settings', 'hal-publications' ) }>
-					{ /* hhQuery field */ }
+				<PanelBody
+					title={ __( 'Settings', 'harvest-hal' ) }
+					initialOpen={ true }
+				>
 					<TextControl
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
@@ -112,9 +115,13 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 					/>
 				</PanelBody>
-				<PanelBody title="Fields to Display" initialOpen={ true }>
+				<PanelBody
+					title={ __( 'Fields to Display', 'harvest-hal' ) }
+					initialOpen={ false }
+				>
 					{ ALL_FIELDS.map( ( field ) => (
 						<CheckboxControl
+							__nextHasNoMarginBottom
 							key={ field.key }
 							label={ field.label }
 							checked={ hhEnabledFields.includes( field.key ) }
@@ -122,15 +129,16 @@ export default function Edit( { attributes, setAttributes } ) {
 						/>
 					) ) }
 				</PanelBody>
-
-				{ /* Author pages array */ }
 				<PanelBody
-					title={ __( 'Author Pages', 'hal-publications' ) }
+					title={ __( 'Author Pages', 'harvest-hal' ) }
 					initialOpen={ false }
 				>
 					{ hhAuthorPages.length === 0 && (
 						<p style={ { fontStyle: 'italic', opacity: 0.7 } }>
-							No author page entries yet.
+							{ __(
+								'No author page entries yet.',
+								'harvest-hal'
+							) }
 						</p>
 					) }
 
@@ -138,6 +146,8 @@ export default function Edit( { attributes, setAttributes } ) {
 						<Flex key={ index } style={ { marginBottom: '8px' } }>
 							<FlexBlock>
 								<TextControl
+									__nextHasNoMarginBottom
+									__next40pxDefaultSize
 									placeholder="idHal"
 									value={ row.idHal || '' }
 									onChange={ ( v ) =>
@@ -148,6 +158,8 @@ export default function Edit( { attributes, setAttributes } ) {
 
 							<FlexBlock>
 								<TextControl
+									__nextHasNoMarginBottom
+									__next40pxDefaultSize
 									placeholder="URL"
 									value={ row.page || '' }
 									onChange={ ( v ) =>
@@ -158,67 +170,79 @@ export default function Edit( { attributes, setAttributes } ) {
 
 							<FlexItem>
 								<Button
+									__next40pxDefaultSize
 									icon="no-alt"
 									label="Remove"
+									isDestructive
+									variant="secondary"
+									size="compact"
 									onClick={ () => removeAuthorPage( index ) }
-									isSecondary
-									isSmall
-									style={ { marginTop: '4px' } }
 								/>
 							</FlexItem>
 						</Flex>
 					) ) }
 
 					<Button
-						isSmall
+						__next40pxDefaultSize
 						variant="primary"
 						onClick={ addAuthorPage }
-						style={ { marginTop: '10px' } }
 					>
 						<Icon icon="plus" />{ ' ' }
-						{ __( 'Add Author Page', 'hal-publications' ) }
+						{ __( 'Add Author Page', 'harvest-hal' ) }
 					</Button>
 				</PanelBody>
-
 				<PanelBody
-					title="Filter (remove) HAL Ids"
+					title={ __( 'Filter (remove) HAL Ids', 'harvest-hal' ) }
 					initialOpen={ false }
 				>
+					{ hhHalIdsToSkip.length === 0 && (
+						<p style={ { fontStyle: 'italic', opacity: 0.7 } }>
+							{ __( 'No HAL IDs to skip.', 'harvest-hal' ) }
+						</p>
+					) }
 					{ hhHalIdsToSkip.map( ( id, index ) => (
-						<Flex
-							key={ index }
-							gap={ 4 }
-							align="center"
-							className="hh-skip-id-row"
-						>
-							<FlexItem isBlock>
+						<Flex key={ index } style={ { marginBottom: '8px' } }>
+							<FlexBlock>
 								<TextControl
-									label={ index === 0 ? 'Skip HAL IDs' : '' }
+									__nextHasNoMarginBottom
+									__next40pxDefaultSize
 									value={ id }
 									placeholder="hal-01234567"
 									onChange={ ( value ) =>
 										updateSkipId( index, value )
 									}
 								/>
+							</FlexBlock>
+							<FlexItem>
+								<Button
+									__next40pxDefaultSize
+									icon="no-alt"
+									label="Remove"
+									isDestructive
+									variant="secondary"
+									size="compact"
+									onClick={ () => removeSkipId( index ) }
+								/>
 							</FlexItem>
-							<Button
-								variant="secondary"
-								isDestructive
-								onClick={ () => removeSkipId( index ) }
-							>
-								Remove
-							</Button>
 						</Flex>
 					) ) }
 
-					<Button variant="primary" onClick={ addSkipId }>
-						Add HAL ID
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						onClick={ addSkipId }
+					>
+						<Icon icon="plus" />{ ' ' }
+						{ __( 'Add HAL ID', 'harvest-hal' ) }
 					</Button>
 				</PanelBody>
 				<PanelBody title="CSS customization" initialOpen={ false }>
 					<TextareaControl
 						label="Custom CSS"
-						help="Target elements inside the block, for example: .authors { font-weight: bold; }"
+						help={ __(
+							'Target elements inside the block, for example: .authors { font-weight: bold; }',
+							'harvest-hal'
+						) }
 						value={ hhCustomCss }
 						onChange={ ( value ) =>
 							setAttributes( { hhCustomCss: value } )
@@ -227,6 +251,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 				</PanelBody>
 			</InspectorControls>
+			{ /* - block display ------------------------------*/ }
 			<div { ...blockProps }>
 				<hr /> Publication list preview (with [HAL id], not shown on
 				frontend)
