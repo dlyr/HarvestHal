@@ -1,6 +1,6 @@
 {
 	"name": "hal-publications-block",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Query api.archives-ouvertes.fr and display the result",
 	"author": "David Vanderhaeghe",
 	"license": "GPL-2.0-or-later",
