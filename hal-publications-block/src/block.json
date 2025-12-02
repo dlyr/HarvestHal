@@ -27,6 +27,25 @@
 		"hhCustomCss": {
 			"type": "string",
 			"default": ""
+		},
+		"hhEnabledFields": {
+			"type": "array",
+			"default": [
+				"title_s",
+				"uri_s",
+				"source_s",
+				"bookTitle_s",
+				"journalTitle_s",
+				"conferenceTitle_s",
+				"producedDate_tdate",
+				"producedDateY_i",
+				"authorityInstitution_s",
+				"authFullNameIdHal_fs",
+				"comment_s",
+				"thumbId_i",
+				"fileMain_s",
+				"seeAlso_s"
+			]
 		}
 	},
 	"supports": {

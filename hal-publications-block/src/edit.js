@@ -9,6 +9,7 @@ import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 
 import {
 	PanelBody,
+	CheckboxControl,
 	TextControl,
 	TextareaControl,
 	Flex,
@@ -19,6 +20,24 @@ import {
 } from '@wordpress/components';
 import ServerSideRender from '@wordpress/server-side-render';
 
+const ALL_FIELDS = [
+	{ key: 'title_s', label: 'Title' },
+	{ key: 'uri_s', label: 'URL' },
+	{ key: 'source_s', label: 'Source' },
+	{ key: 'bookTitle_s', label: 'Book Title' },
+	{ key: 'journalTitle_s', label: 'Journal Title' },
+	{ key: 'conferenceTitle_s', label: 'Conference Title' },
+	{
+		key: 'authorityInstitution_s',
+		label: 'Institution (for thesis and report)',
+	},
+	{ key: 'authFullNameIdHal_fs', label: 'Authors' },
+	{ key: 'comment_s', label: 'Comment' },
+	{ key: 'thumbId_i', label: 'Thumbnail' },
+	{ key: 'fileMain_s', label: 'Main File' },
+	{ key: 'seeAlso_s', label: 'See Also' },
+];
+
 export default function Edit( { attributes, setAttributes } ) {
 	const blockProps = useBlockProps();
 	const {
@@ -26,6 +45,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		hhAuthorPages = [],
 		hhHalIdsToSkip,
 		hhCustomCss,
+		hhEnabledFields,
 	} = attributes;
 
 	// Add a new empty pair
@@ -65,10 +85,16 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const removeSkipId = ( index ) => {
 		setAttributes( {
-			hhHalIdsToSkip: hhHalIdsToSkip.filter(
-				( _, i ) => i !== index
-			),
+			hhHalIdsToSkip: hhHalIdsToSkip.filter( ( _, i ) => i !== index ),
 		} );
+	};
+
+	const toggleField = ( key ) => {
+		const newFields = hhEnabledFields.includes( key )
+			? hhEnabledFields.filter( ( f ) => f !== key )
+			: [ ...hhEnabledFields, key ];
+
+		setAttributes( { hhEnabledFields: newFields } );
 	};
 
 	return (
@@ -85,6 +111,16 @@ export default function Edit( { attributes, setAttributes } ) {
 							setAttributes( { hhQuery: value } )
 						}
 					/>
+				</PanelBody>
+				<PanelBody title="Fields to Display" initialOpen={ true }>
+					{ ALL_FIELDS.map( ( field ) => (
+						<CheckboxControl
+							key={ field.key }
+							label={ field.label }
+							checked={ hhEnabledFields.includes( field.key ) }
+							onChange={ () => toggleField( field.key ) }
+						/>
+					) ) }
 				</PanelBody>
 
 				{ /* Author pages array */ }

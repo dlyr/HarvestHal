@@ -58,16 +58,18 @@ function hh_get_publi_title($p){
   
   $result ='<span class="hal-id">[' .$p["halId_s"].']</span>';
 
-  if($p["uri_s"] != "") {
-    $result .= '<a href="'.$p["uri_s"].'">'.$p["title_s"][0].'</a>';
-  }
-  else{
-    $result .= $p["title_s"][0];
-  }
+  if(hh_check_field($p, "title_s")){
+    if(hh_check_field($p, "uri_s")){
+      $result .= '<a href="'.$p["uri_s"].'">'.$p["title_s"][0].'</a>';
+    }
+    else{
+      $result .= $p["title_s"][0];
+    }
 
+  }
   return $result;
-}
 
+}
 function hh_get_publi_authors($p, $attributes=[]){
   $authorpage=[];
 
@@ -80,25 +82,27 @@ function hh_get_publi_authors($p, $attributes=[]){
   }
 
   $result ='';
-  $c = count($p["authFullNameIdHal_fs"]);
-  $i = 1;
-  foreach ($p["authFullNameIdHal_fs"] as $key=>$author){
+  if(hh_check_field($p, "authFullNameIdHal_fs")){
+    $c = count($p["authFullNameIdHal_fs"]);
+    $i = 1;
+    foreach ($p["authFullNameIdHal_fs"] as $key=>$author){
 
-    $auth = explode("_FacetSep_", $author);
-    $name = $auth[0];
-    $idHal = "dummy";
-    if(isset($auth[1])) $idHal = $auth[1];
+      $auth = explode("_FacetSep_", $author);
+      $name = $auth[0];
+      $idHal = "dummy";
+      if(isset($auth[1])) $idHal = $auth[1];
 
-    // get name and add link to author page if needed
-    $currentname = $name;
-    // add links to authors webpages
-    if(isset($idHal) && isset($authorpage[$idHal]))
-      $currentname = "<a href=\"$authorpage[$idHal]\" target=\"_blank\">$currentname</a>";
-    $result .=  $currentname;
-    if($i++ < $c) $result .= ", ";
+      // get name and add link to author page if needed
+      $currentname = $name;
+      // add links to authors webpages
+      if(isset($idHal) && isset($authorpage[$idHal]))
+        $currentname = "<a href=\"$authorpage[$idHal]\" target=\"_blank\">$currentname</a>";
+      $result .=  $currentname;
+      if($i++ < $c) $result .= ", ";
+    }
+    $result .= ".";
+    return $result;
   }
-  $result .= ".";
-  return $result;
 }
 
 function hh_get_publi_links($p, $attributes = []) {
@@ -210,10 +214,12 @@ function hh_get_publi_infos($p){
     $how = "bookTitle_s";
   }
   else if(hh_check_field($p,"docType_s")){
-    if($p["docType_s"] === "HDR"){ $result .= "HDR, " . $p["authorityInstitution_s"][0]; 	$how= "docType_s"; }
-    if($p["docType_s"] === "THESE"){ $result .= "PhD. Thesis, " . $p["authorityInstitution_s"][0]; 	$how= "docType_s"; }
-    if($p["docType_s"] === "REPORT"){ $result .= "Research Report, " . $p["authorityInstitution_s"][0];	$how= "docType_s"; }
-    if($p["docType_s"] === "MEM"){ $result .= "Master Thesis, " . $p["authorityInstitution_s"][0];	$how="docType_s"; }   
+    $institution="";
+    if(hh_check_field($p, "authorityInstitution_s")) $institution =", " . $p["authorityInstitution_s"][0];
+    if($p["docType_s"] === "HDR"){ $result .= "HDR" . $institution; 	$how= "docType_s"; }
+    if($p["docType_s"] === "THESE"){ $result .= "PhD. Thesis" . $institution; 	$how= "docType_s"; }
+    if($p["docType_s"] === "REPORT"){ $result .= "Research Report" . $institution;	$how= "docType_s"; }
+    if($p["docType_s"] === "MEM"){ $result .= "Master Thesis" . $institution;	$how="docType_s"; }   
     if($p["docType_s"] === "POSTER"){ $result .= "Poster" . $how= "docType_s"; }    
   }
 
@@ -238,10 +244,15 @@ function hh_print_publi($p, $attributes=[]){
   
   $result="";
   $result .= '<div class="wp-block-columns is-layout-flex">';
-  $result .= '<div class="wp-block-column is-layout-flow thumbnail">';
-  $result .= '<figure class="wp-block-image size-full thumbnail">';
-  $result .= hh_get_publi_thumb($p);
-  $result .= '</figure></div>';
+
+  if ( isset($attributes['hhEnabledFields']) && in_array( 'thumbId_i', $attributes['hhEnabledFields'] ) ) {
+    $result .= '<div class="wp-block-column is-layout-flow thumbnail">';
+
+    $result .= '<figure class="wp-block-image size-full thumbnail">';
+    $result .= hh_get_publi_thumb($p);
+    $result .= '</figure></div>';
+  }
+
   $result .= '<div class="wp-block-column is-content-justification-left is-layout-constrained publication-column">';
   $result .= '<div class="wp-block-group is-vertical is-content-justification-left is-layout-flex publication-group">';
   $result .= '<p class="title">' . hh_get_publi_title($p) . '</p>';
@@ -253,27 +264,22 @@ function hh_print_publi($p, $attributes=[]){
 
 }
 
-function hh_download_json($query){
+function hh_download_json($attributes){
+  $query='*';
+  if ( isset( $attributes['hhQuery'] ) ){
+    $query = $attributes['hhQuery'];
+  }
 
-  $fl = "";
-  
+  $fl = "";  
   $fl .= "halId_s,";
   $fl .= "docType_s,";
-  $fl .= "title_s,";
-  $fl .= "uri_s,";
-  $fl .= "source_s,";
-  $fl .= "bookTitle_s,";
-  $fl .= "journalTitle_s,";
-  $fl .= "conferenceTitle_s,";
   $fl .= "producedDate_tdate,";
   $fl .= "producedDateY_i,";
-  $fl .= "authorityInstitution_s,";
-  $fl .= "authFullNameIdHal_fs,";
-  $fl .= "comment_s,";
-  $fl .= "thumbId_i,";
-  $fl .= "fileMain_s,";
-  $fl .= "seeAlso_s";
 
+  if ( isset($attributes['hhEnabledFields'])) {
+    $fl .= implode(",", $attributes["hhEnabledFields"]);
+  }
+  
   $q=urlencode($query);
 
   $url = "https://api.archives-ouvertes.fr/search/?q=".$q."&wt=json&fl=".$fl."&sort=producedDate_tdate%20desc&rows=1000";  
@@ -293,12 +299,8 @@ function hh_filter( $publis, $attributes ){
 
 function hh_print_publications($attributes){
 
-  $query='*';
-  if ( isset( $attributes['hhQuery'] ) ){
-    $query = $attributes['hhQuery'];
-  }
-
-  $publis = hh_filter(hh_download_json($query), $attributes);
+  
+  $publis = hh_filter(hh_download_json($attributes), $attributes);
   $year = $publis[0]["producedDateY_i"];
   $result='';
 

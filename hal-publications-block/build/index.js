@@ -8,7 +8,7 @@
   \************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"dlyr/hal-publications","version":"0.1.0","title":"Hal Publications","category":"widgets","description":"Query https://api.archives-ouvertes.fr/ and display the result","example":{},"attributes":{"hhQuery":{"type":"string"},"hhAuthorPages":{"type":"array","default":[],"items":{"type":"object","properties":{"idHal":{"type":"string"},"page":{"type":"string"}}}},"hhHalIdsToSkip":{"type":"array","default":[]},"hhCustomCss":{"type":"string","default":""}},"supports":{"color":{"background":false,"text":true},"html":false,"typography":{"fontSize":true}},"textdomain":"harvest-hal","editorScript":"file:./index.js","render":"file:./render.php","style":"file:./style-index.css","editorStyle":"file:./index.css"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"dlyr/hal-publications","version":"0.1.0","title":"Hal Publications","category":"widgets","description":"Query https://api.archives-ouvertes.fr/ and display the result","example":{},"attributes":{"hhQuery":{"type":"string"},"hhAuthorPages":{"type":"array","default":[],"items":{"type":"object","properties":{"idHal":{"type":"string"},"page":{"type":"string"}}}},"hhHalIdsToSkip":{"type":"array","default":[]},"hhCustomCss":{"type":"string","default":""},"hhEnabledFields":{"type":"array","default":["title_s","uri_s","source_s","bookTitle_s","journalTitle_s","conferenceTitle_s","producedDate_tdate","producedDateY_i","authorityInstitution_s","authFullNameIdHal_fs","comment_s","thumbId_i","fileMain_s","seeAlso_s"]}},"supports":{"color":{"background":false,"text":true},"html":false,"typography":{"fontSize":true}},"textdomain":"harvest-hal","editorScript":"file:./index.js","render":"file:./render.php","style":"file:./style-index.css","editorStyle":"file:./index.css"}');
 
 /***/ }),
 
@@ -42,6 +42,43 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const ALL_FIELDS = [{
+  key: 'title_s',
+  label: 'Title'
+}, {
+  key: 'uri_s',
+  label: 'URL'
+}, {
+  key: 'source_s',
+  label: 'Source'
+}, {
+  key: 'bookTitle_s',
+  label: 'Book Title'
+}, {
+  key: 'journalTitle_s',
+  label: 'Journal Title'
+}, {
+  key: 'conferenceTitle_s',
+  label: 'Conference Title'
+}, {
+  key: 'authorityInstitution_s',
+  label: 'Institution (for thesis and report)'
+}, {
+  key: 'authFullNameIdHal_fs',
+  label: 'Authors'
+}, {
+  key: 'comment_s',
+  label: 'Comment'
+}, {
+  key: 'thumbId_i',
+  label: 'Thumbnail'
+}, {
+  key: 'fileMain_s',
+  label: 'Main File'
+}, {
+  key: 'seeAlso_s',
+  label: 'See Also'
+}];
 function Edit({
   attributes,
   setAttributes
@@ -51,7 +88,8 @@ function Edit({
     hhQuery,
     hhAuthorPages = [],
     hhHalIdsToSkip,
-    hhCustomCss
+    hhCustomCss,
+    hhEnabledFields
   } = attributes;
 
   // Add a new empty pair
@@ -105,6 +143,12 @@ function Edit({
       hhHalIdsToSkip: hhHalIdsToSkip.filter((_, i) => i !== index)
     });
   };
+  const toggleField = key => {
+    const newFields = hhEnabledFields.includes(key) ? hhEnabledFields.filter(f => f !== key) : [...hhEnabledFields, key];
+    setAttributes({
+      hhEnabledFields: newFields
+    });
+  };
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.Fragment, {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
@@ -118,6 +162,14 @@ function Edit({
             hhQuery: value
           })
         })
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
+        title: "Fields to Display",
+        initialOpen: true,
+        children: ALL_FIELDS.map(field => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.CheckboxControl, {
+          label: field.label,
+          checked: hhEnabledFields.includes(field.key),
+          onChange: () => toggleField(field.key)
+        }, field.key))
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
         title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Author Pages', 'hal-publications'),
         initialOpen: false,
