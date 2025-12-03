@@ -28,9 +28,12 @@ jobs:
 
       - name: Build plugin zip
         working-directory: hal-publications-block
-        run: npm run plugin-zip
+        run: |
+          npm run build
+          npm run sync-version
+          npm run plugin-zip
 
-      - name: Upload artifact (always store build)
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: hal-publications-block
