@@ -365,7 +365,6 @@ function hh_download_json($attributes)
 		$fl .
 		'&sort=producedDate_tdate%20desc&rows=1000';
 	$json = hh_curl_download($url);
-	hh_write_log($url);
 	$publis = json_decode($json, true)['response']['docs'];
 	return $publis;
 }
@@ -384,17 +383,20 @@ function hh_filter($publis, $attributes)
 function hh_print_publications($attributes)
 {
 	$publis = hh_filter(hh_download_json($attributes), $attributes);
-	$year = $publis[0]['producedDateY_i'];
 	$result = '';
 
-	$result .= '<h2>' . $year . '</h2>';
+	if (isset($publis[0]) && isset($publis[0]['producedDateY_i'])) {
+		$year = $publis[0]['producedDateY_i'];
 
-	foreach ($publis as $p) {
-		if ($year != $p['producedDateY_i']) {
-			$year = $p['producedDateY_i'];
-			$result .= '<h2>' . $year . '</h2>';
+		$result .= '<h2>' . $year . '</h2>';
+
+		foreach ($publis as $p) {
+			if ($year != $p['producedDateY_i']) {
+				$year = $p['producedDateY_i'];
+				$result .= '<h2>' . $year . '</h2>';
+			}
+			$result .= hh_print_publi($p, $attributes);
 		}
-		$result .= hh_print_publi($p, $attributes);
 	}
 	return $result;
 }
@@ -414,7 +416,9 @@ function hh_render_publications_block($attributes)
 	}
 
 	return '<div ' .
-		get_block_wrapper_attributes() .
+		get_block_wrapper_attributes([
+			'class' => 'wp-block-dlyr-hal-publications',
+		]) .
 		'>' .
 		$css .
 		' ' .
