@@ -1,7 +1,6 @@
 <?php
 /**
  * Plugin Name:       hal-publications
-
  * Description:       Query https://api.archives-ouvertes.fr/ and desplay the result
  * Version: 0.1.2
  * Requires at least: 6.6.1
