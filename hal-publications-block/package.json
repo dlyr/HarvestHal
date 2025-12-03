@@ -1,9 +1,9 @@
 {
 	"name": "hal-publications-block",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Query api.archives-ouvertes.fr and display the result",
 	"author": "David Vanderhaeghe",
-	"license": "GPL-2.0-or-later",
+	"license": "GPL-3",
 	"main": "build/index.js",
 	"scripts": {
 		"build": "wp-scripts build --blocks-manifest",
@@ -14,7 +14,8 @@
 		"plugin-zip": "wp-scripts plugin-zip",
 		"start": "wp-scripts start --blocks-manifest",
 		"env": "wp-env",
-		"prettier": "prettier . -w *.php includes/*.php src/*.php"
+		"prettier": "prettier . -w *.php includes/*.php src/*.php",
+		"sync-version": "node scripts/sync-version.js && npm run format && npm run prettier"
 	},
 	"devDependencies": {
 		"@wordpress/env": "^10.36.0",
