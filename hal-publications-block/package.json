@@ -13,10 +13,14 @@
 		"packages-update": "wp-scripts packages-update",
 		"plugin-zip": "wp-scripts plugin-zip",
 		"start": "wp-scripts start --blocks-manifest",
-		"env": "wp-env"
+		"env": "wp-env",
+		"prettier": "prettier . -w"
 	},
 	"devDependencies": {
 		"@wordpress/env": "^10.36.0",
 		"@wordpress/scripts": "^31.1.0"
+	},
+	"dependencies": {
+		"@prettier/plugin-php": "^0.24.0"
 	}
 }

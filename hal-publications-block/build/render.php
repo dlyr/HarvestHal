@@ -1,5 +1,4 @@
 <?php
 
-echo hh_render_publications_block($attributes);
-?>
+echo hh_render_publications_block($attributes); ?>
 
