@@ -14,7 +14,7 @@
 		"plugin-zip": "wp-scripts plugin-zip",
 		"start": "wp-scripts start --blocks-manifest",
 		"env": "wp-env",
-		"prettier": "prettier . -w"
+		"prettier": "prettier . -w *.php includes/*.php src/*.php"
 	},
 	"devDependencies": {
 		"@wordpress/env": "^10.36.0",
