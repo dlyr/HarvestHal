@@ -33,7 +33,8 @@ require_once plugin_dir_path(__FILE__) . 'includes/hh.php';
 
 function hh_render_publications_shortcode($atts = [], $content = null)
 {
-	//  $atts = array_change_key_case( (array) $atts, CASE_LOWER );
+	$atts = array_change_key_case((array) $atts, CASE_LOWER);
+
 	wp_enqueue_style(
 		'hh-shortcode-style',
 		plugins_url('build/style-index.css', __FILE__),
@@ -42,9 +43,10 @@ function hh_render_publications_shortcode($atts = [], $content = null)
 		[
 			'query' => '',
 			'fields' =>
-				'source_s,description_s,authorityInstitution_s,bookTitle_s,page_s,title_s,authFullName_s,journalTitle_s,conferenceTitle_s,fileMain_s,authFullNameIdHal_fs,uri_s,thumbId_i,comment_s,fileAnnexes_s,seeAlso_s',
+				'source_s,description_s,authorityInstitution_s,bookTitle_s,page_s,title_s,journalTitle_s,conferenceTitle_s,fileMain_s,authFullNameIdHal_fs,uri_s,thumbId_i,comment_s,fileAnnexes_s,seeAlso_s',
 			'css' => '',
-			'authorPages' => '',
+			'authorpages' => '',
+			'filter' => [],
 		],
 		$atts,
 		'dlyr-hal-publications',
@@ -55,9 +57,10 @@ function hh_render_publications_shortcode($atts = [], $content = null)
 		'hhEnabledFields' => explode(',', $hh_atts['fields']),
 		'hhCustomCss' => $hh_atts['css'],
 		'hhAuthorPages' => [],
+		'hhHalIdsToSkip' => array_map('trim', explode(',', $hh_atts['filter'])),
 	];
 
-	$pages = explode(',', $hh_atts['authorPages']);
+	$pages = explode(',', $hh_atts['authorpages']);
 
 	foreach ($pages as $auth_page) {
 		$pp = explode('=', $auth_page);
@@ -66,12 +69,12 @@ function hh_render_publications_shortcode($atts = [], $content = null)
 			$page = $pp[1];
 			$attributes['hhAuthorPages'][] = [
 				'idHal' => $auth,
-				'page' => $page,
+				'page' => filter_var($page, FILTER_VALIDATE_URL),
 			];
 		}
 	}
 
-	return hh_render_publications_block($attributes);
+	return hh_render_publications_block($attributes, false);
 }
 
 add_shortcode('dlyr-hal-publications', 'hh_render_publications_shortcode');

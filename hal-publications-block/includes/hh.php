@@ -376,13 +376,22 @@ function hh_filter($publis, $attributes)
 		: [];
 
 	return array_filter($publis, function ($item) use ($skip) {
+		hh_write_log($item['halId_s']);
+		if (!in_array($item['halId_s'], $skip)) {
+			hh_write_log('keep');
+		} else {
+			hh_write_log('skip');
+		}
 		return !in_array($item['halId_s'], $skip);
 	});
 }
 
 function hh_print_publications($attributes)
 {
-	$publis = hh_filter(hh_download_json($attributes), $attributes);
+	$publis = array_values(
+		hh_filter(hh_download_json($attributes), $attributes),
+	);
+	hh_write_log($publis);
 	$result = '';
 
 	if (isset($publis[0]) && isset($publis[0]['producedDateY_i'])) {
@@ -401,7 +410,7 @@ function hh_print_publications($attributes)
 	return $result;
 }
 
-function hh_render_publications_block($attributes)
+function hh_render_publications_block($attributes, $block = true)
 {
 	// Generate the publication list
 	$content = hh_print_publications($attributes);
@@ -416,9 +425,9 @@ function hh_render_publications_block($attributes)
 	}
 
 	return '<div ' .
-		get_block_wrapper_attributes([
-			'class' => 'wp-block-dlyr-hal-publications',
-		]) .
+		($block
+			? get_block_wrapper_attributes()
+			: 'class="wp-block-dlyr-hal-publications"') .
 		'>' .
 		$css .
 		' ' .
