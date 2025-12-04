@@ -1,5 +1,4 @@
 .wp-block-dlyr-hal-publications {
-
 	.authors,
 	.infos,
 	.links {
@@ -26,6 +25,10 @@
 		max-height: 96px;
 		margin-left: auto !important;
 		margin-right: auto !important;
+	}
+
+	img.thumbnail {
+		margin: auto;
 	}
 
 	div.thumbnail {
