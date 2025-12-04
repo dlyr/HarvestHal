@@ -11,7 +11,7 @@ This plugin provides two version, short code and block. The shortcode version wo
 Install and activate hal-publication-block.zip plugin.
 Add hal-publications block to your page or post.
 
-
+https://github.com/user-attachments/assets/a620718e-3db8-4e0a-aba9-4b6125585575
 
 ## Short code.
 
@@ -23,7 +23,7 @@ Insert short code `[dlyr-hal-publications]`. It can be controlled with the follo
 - authorPages: halId=url, separated by commas, e.g. `authorPages="vdh=https://www.dlyr.fr"`. url must contains http:// or https:// to be valid.
 - filter: a comma separated list of hal-id to remove from the query, e.g. `filter="hal-04738931,hal-03631518"`
 
-
+https://github.com/user-attachments/assets/0e2f11bc-981e-4b80-8c24-e3f9f22920d7
 
 ## Html output
 
