@@ -46,7 +46,7 @@ function hh_render_publications_shortcode($atts = [], $content = null)
 				'source_s,description_s,authorityInstitution_s,bookTitle_s,page_s,title_s,journalTitle_s,conferenceTitle_s,fileMain_s,authFullNameIdHal_fs,uri_s,thumbId_i,comment_s,fileAnnexes_s,seeAlso_s',
 			'css' => '',
 			'authorpages' => '',
-			'filter' => [],
+			'filter' => '',
 		],
 		$atts,
 		'dlyr-hal-publications',
@@ -57,20 +57,28 @@ function hh_render_publications_shortcode($atts = [], $content = null)
 		'hhEnabledFields' => explode(',', $hh_atts['fields']),
 		'hhCustomCss' => $hh_atts['css'],
 		'hhAuthorPages' => [],
-		'hhHalIdsToSkip' => array_map('trim', explode(',', $hh_atts['filter'])),
 	];
 
-	$pages = explode(',', $hh_atts['authorpages']);
+	if (hh_check_field($hh_atts, 'filter')) {
+		hh_write_log(is_array($hh_atts['filter']));
+		$attributes['hhHalIdsToSkip'] = array_map(
+			'trim',
+			explode(',', $hh_atts['filter']),
+		);
+	}
 
-	foreach ($pages as $auth_page) {
-		$pp = explode('=', $auth_page);
-		if (count($pp) == 2) {
-			$auth = $pp[0];
-			$page = $pp[1];
-			$attributes['hhAuthorPages'][] = [
-				'idHal' => $auth,
-				'page' => filter_var($page, FILTER_VALIDATE_URL),
-			];
+	if (hh_check_field($hh_atts, 'authorpages')) {
+		$pages = array_map('trim', explode(',', $hh_atts['authorpages']));
+		foreach ($pages as $auth_page) {
+			$pp = explode('=', $auth_page);
+			if (count($pp) == 2) {
+				$auth = $pp[0];
+				$page = $pp[1];
+				$attributes['hhAuthorPages'][] = [
+					'idHal' => $auth,
+					'page' => filter_var($page, FILTER_VALIDATE_URL),
+				];
+			}
 		}
 	}
 

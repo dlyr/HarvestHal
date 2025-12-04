@@ -376,12 +376,6 @@ function hh_filter($publis, $attributes)
 		: [];
 
 	return array_filter($publis, function ($item) use ($skip) {
-		hh_write_log($item['halId_s']);
-		if (!in_array($item['halId_s'], $skip)) {
-			hh_write_log('keep');
-		} else {
-			hh_write_log('skip');
-		}
 		return !in_array($item['halId_s'], $skip);
 	});
 }
@@ -391,7 +385,6 @@ function hh_print_publications($attributes)
 	$publis = array_values(
 		hh_filter(hh_download_json($attributes), $attributes),
 	);
-	hh_write_log($publis);
 	$result = '';
 
 	if (isset($publis[0]) && isset($publis[0]['producedDateY_i'])) {
