@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       hal-publications
  * Description:       Query https://api.archives-ouvertes.fr/ and desplay the result
- * Version: 0.1.4
+ * Version: 0.1.5
  * Requires at least: 6.2.6
  * Requires PHP:      7.4
  * Author:            David Vanderhaeghe
@@ -22,6 +22,9 @@ if (!defined('ABSPATH')) {
  *
  * @see https://developer.wordpress.org/reference/functions/register_block_type/
  */
+
+require_once plugin_dir_path(__FILE__) . 'includes/hh.php';
+
 function hh_hal_block_init()
 {
 	register_block_type(__DIR__ . '/build');
@@ -29,7 +32,15 @@ function hh_hal_block_init()
 
 add_action('init', 'hh_hal_block_init');
 
-require_once plugin_dir_path(__FILE__) . 'includes/hh.php';
+add_action('rest_api_init', function () {
+	register_rest_route('hal-publications/v1', '/clear-cache', [
+		'methods' => 'POST',
+		'callback' => 'hh_clear_cache_handler',
+		'permission_callback' => function () {
+			return current_user_can('edit_posts');
+		},
+	]);
+});
 
 function hh_render_publications_shortcode($atts = [], $content = null)
 {
@@ -60,7 +71,6 @@ function hh_render_publications_shortcode($atts = [], $content = null)
 	];
 
 	if (hh_check_field($hh_atts, 'filter')) {
-		hh_write_log(is_array($hh_atts['filter']));
 		$attributes['hhHalIdsToSkip'] = array_map(
 			'trim',
 			explode(',', $hh_atts['filter']),

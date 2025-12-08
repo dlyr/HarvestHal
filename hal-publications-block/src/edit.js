@@ -17,8 +17,11 @@ import {
 	FlexItem,
 	Button,
 	Icon,
+	RangeControl,
 } from '@wordpress/components';
 import ServerSideRender from '@wordpress/server-side-render';
+import { dispatch } from '@wordpress/data';
+import apiFetch from '@wordpress/api-fetch';
 
 const ALL_FIELDS = [
 	{ key: 'title_s', label: 'Title' },
@@ -46,6 +49,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		hhHalIdsToSkip,
 		hhCustomCss,
 		hhEnabledFields,
+		cacheDuration,
 	} = attributes;
 
 	// --- author pages ----------------------------------------------------
@@ -97,6 +101,29 @@ export default function Edit( { attributes, setAttributes } ) {
 		setAttributes( { hhEnabledFields: newFields } );
 	};
 
+	// ---clear cache ------------------------------------------------------
+
+	const clearCache = async () => {
+		try {
+			await apiFetch( {
+				path: '/hal-publications/v1/clear-cache',
+				method: 'POST',
+				data: { attrs: attributes },
+			} );
+
+			dispatch( 'core/notices' ).createNotice(
+				'success',
+				'Cache cleared successfully!',
+				{ type: 'snackbar', isDismissible: true }
+			);
+		} catch ( e ) {
+			dispatch( 'core/notices' ).createNotice(
+				'error',
+				'Error clearing cache.',
+				{ type: 'snackbar', isDismissible: true }
+			);
+		}
+	};
 	return (
 		<>
 			{ /* --- editor controls ----------------------------*/ }
@@ -114,11 +141,9 @@ export default function Edit( { attributes, setAttributes } ) {
 							setAttributes( { hhQuery: value } )
 						}
 					/>
-				</PanelBody>
-				<PanelBody
-					title={ __( 'Fields to Display', 'harvest-hal' ) }
-					initialOpen={ false }
-				>
+					<legend className="components-base-control blocks-base-control__label">
+						{ __( 'Fields to Display', 'harvest-hal' ) }
+					</legend>
 					{ ALL_FIELDS.map( ( field ) => (
 						<CheckboxControl
 							__nextHasNoMarginBottom
@@ -249,6 +274,22 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 						rows={ 6 }
 					/>
+				</PanelBody>
+				<PanelBody title="Cache settings" initialOpen={ false }>
+					<RangeControl
+						label="Cache duration (minutes)"
+						value={ cacheDuration }
+						onChange={ ( v ) =>
+							setAttributes( { cacheDuration: v } )
+						}
+						min={ 0 }
+						max={ 2880 }
+						step={ 1 }
+					/>
+
+					<Button variant="secondary" onClick={ clearCache }>
+						Clear cache
+					</Button>
 				</PanelBody>
 			</InspectorControls>
 			{ /* - block display ------------------------------*/ }

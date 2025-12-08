@@ -11,6 +11,20 @@ function hh_write_log($data)
 	}
 }
 
+function hh_clear_cache_handler(WP_REST_Request $request)
+{
+	$attrs = $request->get_param('attrs');
+	if (!$attrs) {
+		return new WP_REST_Response('Missing attributes', 400);
+	}
+
+	$cache_key = 'hh_hal_cache_' . md5(json_encode(ksort($attrs)));
+
+	delete_transient($cache_key);
+
+	return new WP_REST_Response('Cache cleared', 200);
+}
+
 function hh_curl_download($Url)
 {
 	// is cURL installed yet?
@@ -405,6 +419,19 @@ function hh_print_publications($attributes)
 
 function hh_render_publications_block($attributes, $block = true)
 {
+	// Create a unique cache key based on the attributes
+	$cache_key = 'hh_hal_cache_' . md5(json_encode(ksort($attributes)));
+
+	$cache_ttl = isset($attributes['cacheDuration'])
+		? intval($attributes['cacheDuration']) * MINUTE_IN_SECONDS
+		: HOUR_IN_SECONDS;
+
+	// Try to get cached data
+	$cached = get_transient($cache_key);
+	if ($cached !== false) {
+		return $cached; // Return cached HTML
+	}
+
 	// Generate the publication list
 	$content = hh_print_publications($attributes);
 
@@ -417,7 +444,9 @@ function hh_render_publications_block($attributes, $block = true)
 			' }</style>';
 	}
 
-	return '<div ' .
+	// Final output
+	$output =
+		'<div ' .
 		($block
 			? get_block_wrapper_attributes()
 			: 'class="wp-block-dlyr-hal-publications"') .
@@ -426,4 +455,7 @@ function hh_render_publications_block($attributes, $block = true)
 		' ' .
 		$content .
 		'</div>';
+	// Save to cache
+	set_transient($cache_key, $output, $cache_ttl);
+	return $output;
 }
