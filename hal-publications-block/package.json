@@ -15,7 +15,7 @@
 		"start": "wp-scripts start --blocks-manifest",
 		"env": "wp-env",
 		"prettier": "prettier . -w *.php includes/*.php src/*.php",
-		"sync-version": "node scripts/sync-version.js && npm run format && npm run prettier"
+		"sync-version": "node scripts/sync-version.js && npm run prettier && npm run format && npm run lint:css"
 	},
 	"devDependencies": {
 		"@wordpress/env": "^10.36.0",
